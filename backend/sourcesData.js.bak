@@ -1,0 +1,178 @@
+// C:\Nxtwave-Sathwika\jansahayak-ai\backend\sourcesData.js
+// Authoritative Government Data Adapters & Official Source Registry
+// Covers Schemes, Identity, Travel, Banking (RBI), and Certificates
+
+const SOURCES = [
+  {
+    id: "src-myscheme",
+    name: "myScheme Central Platform",
+    official_url: "https://www.myscheme.gov.in/",
+    adapter_type: "REST_API_AND_CATALOG",
+    connection_status: "Connected (Verified Source)",
+    auth_type: "Official Public Catalog & Open Data Feed",
+    last_successful_update: "2026-11-15T08:30:00Z",
+    last_verification_date: "2026-11-01",
+    imported_schemes_count: 32,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "National platform for discovering central & state government schemes with structured criteria and documents."
+  },
+  {
+    id: "src-nsp",
+    name: "National Scholarship Portal (NSP)",
+    official_url: "https://scholarships.gov.in/",
+    adapter_type: "DOCUMENT_AND_OFFICIAL_FEED",
+    connection_status: "Connected (Official Guidelines)",
+    auth_type: "Public Notification & OTR Schema",
+    last_successful_update: "2026-11-14T14:15:00Z",
+    last_verification_date: "2026-10-28",
+    imported_schemes_count: 48,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "One-stop digital platform of the Government of India for all pre-matric and post-matric central scholarship disbursements."
+  },
+  {
+    id: "src-ts-epass",
+    name: "Telangana ePASS Portal",
+    official_url: "https://telanganaepass.cgg.gov.in/",
+    adapter_type: "DOCUMENT_INGESTION_AND_GAZETTE",
+    connection_status: "Connected (Gazette Verified)",
+    auth_type: "State Portal Scrutiny & G.O. Records",
+    last_successful_update: "2026-11-15T11:00:00Z",
+    last_verification_date: "2026-11-05",
+    imported_schemes_count: 14,
+    sync_frequency: "Weekly",
+    errors: [],
+    description: "Electronic Payment and Application System of Scholarships by Government of Telangana for RTF and MTF."
+  },
+  {
+    id: "src-uidai",
+    name: "Unique Identification Authority of India (UIDAI)",
+    official_url: "https://uidai.gov.in/",
+    adapter_type: "AUTHORITATIVE_PORTAL_GUIDELINES",
+    connection_status: "Connected (Official Circulars)",
+    auth_type: "UIDAI Public Service Norms",
+    last_successful_update: "2026-11-16T10:00:00Z",
+    last_verification_date: "2026-11-10",
+    imported_schemes_count: 6,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "Statutory authority under MeitY for 12-digit Aadhaar enrolment, biometric/demographic updates, and e-Aadhaar verification."
+  },
+  {
+    id: "src-incometax",
+    name: "Income Tax Department & Protean (NSDL) / UTIITSL",
+    official_url: "https://www.incometax.gov.in/iec/foportal/",
+    adapter_type: "OFFICIAL_WEB_PORTAL",
+    connection_status: "Connected (Verified Source)",
+    auth_type: "CBDT PAN Guidelines & Instant e-PAN API",
+    last_successful_update: "2026-11-16T09:30:00Z",
+    last_verification_date: "2026-11-08",
+    imported_schemes_count: 5,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "Official PAN card processing network including Form 49A, paperless Aadhaar Instant e-PAN, and PAN status tracking."
+  },
+  {
+    id: "src-passport",
+    name: "Passport Seva (Ministry of External Affairs)",
+    official_url: "https://www.passportindia.gov.in/psp",
+    adapter_type: "OFFICIAL_PORTAL_AND_APPOINTMENT_FEED",
+    connection_status: "Connected (Verified PSP Guidelines)",
+    auth_type: "CPV Division Official Guidelines",
+    last_successful_update: "2026-11-15T16:00:00Z",
+    last_verification_date: "2026-11-01",
+    imported_schemes_count: 4,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "Consular, Passport and Visa (CPV) Division portal for Indian passport issuance, PSK appointments, and police verification tracking."
+  },
+  {
+    id: "src-parivahan",
+    name: "Parivahan Sewa (MoRTH)",
+    official_url: "https://parivahan.gov.in/",
+    adapter_type: "SARATHI_PORTAL_GATEWAY",
+    connection_status: "Connected (Verified Sarathi Guidelines)",
+    auth_type: "MoRTH Central Motor Vehicles Rules",
+    last_successful_update: "2026-11-14T11:45:00Z",
+    last_verification_date: "2026-10-31",
+    imported_schemes_count: 6,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "National transport portal for Learner's Licence, Permanent Driving Licence, DL renewals, and contactless Aadhaar tests."
+  },
+  {
+    id: "src-eci-voter",
+    name: "Election Commission of India (ECI) Voters' Portal",
+    official_url: "https://voters.eci.gov.in/",
+    adapter_type: "OFFICIAL_ELECTORAL_GATEWAY",
+    connection_status: "Connected (Verified ECI Portal)",
+    auth_type: "ECI Public Electoral Roll Guidelines",
+    last_successful_update: "2026-11-15T07:20:00Z",
+    last_verification_date: "2026-11-02",
+    imported_schemes_count: 3,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "National Voters' Service Portal for Form 6 new voter registration, Form 8 correction, and digital e-EPIC card downloads."
+  },
+  {
+    id: "src-meeseva",
+    name: "Telangana MeeSeva & Revenue Department",
+    official_url: "https://ts.meeseva.telangana.gov.in/meeseva/home.htm",
+    adapter_type: "STATE_CITIZEN_SERVICE_PORTAL",
+    connection_status: "Connected (Gazette Verified)",
+    auth_type: "State IT & Revenue Department SLA Norms",
+    last_successful_update: "2026-11-16T12:00:00Z",
+    last_verification_date: "2026-11-05",
+    imported_schemes_count: 12,
+    sync_frequency: "Daily",
+    errors: [],
+    description: "One-stop citizen service portal for digitally signed Income, Caste, Residence, Birth certificates, and Food Security cards."
+  },
+  {
+    id: "src-rbi",
+    name: "Reserve Bank of India (RBI) Citizen Charters",
+    official_url: "https://www.rbi.org.in/",
+    adapter_type: "CENTRAL_BANK_REGULATORY_CHARTER",
+    connection_status: "Connected (Regulatory Guidelines)",
+    auth_type: "RBI Master Directions on Customer Service & KYC",
+    last_successful_update: "2026-11-13T10:00:00Z",
+    last_verification_date: "2026-10-15",
+    imported_schemes_count: 8,
+    sync_frequency: "Weekly",
+    errors: [],
+    description: "Authoritative regulatory standards for savings accounts, zero-balance BSBDA norms, ATM card safety, passbook rules, and bank KYC."
+  },
+  {
+    id: "src-data-gov",
+    name: "Open Government Data (data.gov.in)",
+    official_url: "https://data.gov.in/",
+    adapter_type: "API_CONNECTOR",
+    connection_status: "Configured (API Key Ready / Demo Fallback)",
+    auth_type: "API Key Header (DATA_GOV_IN_API_KEY)",
+    last_successful_update: "2026-11-12T09:00:00Z",
+    last_verification_date: "2026-10-20",
+    imported_schemes_count: 8,
+    sync_frequency: "On Demand",
+    errors: [],
+    description: "Official Open Government Data Platform India for datasets on higher education institutions, courses, and state statistics."
+  },
+  {
+    id: "src-apisetu",
+    name: "API Setu Extensible Module",
+    official_url: "https://apisetu.gov.in/",
+    adapter_type: "GOVERNMENT_GATEWAY",
+    connection_status: "Extensible Integration Mode (Requires Department Approval)",
+    auth_type: "OAuth2 & Institutional API Token",
+    last_successful_update: "2026-10-30T16:00:00Z",
+    last_verification_date: "2026-10-30",
+    imported_schemes_count: 0,
+    sync_frequency: "Manual",
+    errors: [
+      "Institutional subscription required for live DigiLocker certificate pull - running in compliance mode."
+    ],
+    description: "India's API gateway for inter-departmental data exchange, identity verification, and educational certificate verification."
+  }
+];
+
+module.exports = { SOURCES };

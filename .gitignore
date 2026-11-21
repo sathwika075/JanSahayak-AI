@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+*/node_modules/
+package-lock.json
+
+# Environment variables & secrets (CRITICAL)
+.env
+.env.local
+.env.*.local
+*.env
+backend/.env
+
+# Temporary / OS / Build files
+dist/
+build/
+*.log
+.DS_Store
+Thumbs.db
+
+# User uploads / Temp storage
+uploads/*
+!uploads/.gitkeep

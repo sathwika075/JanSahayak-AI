@@ -1,0 +1,130 @@
+[
+  {
+    "id": "log-1794995990693-zt12j",
+    "timestamp": "2026-11-18T09:59:50.693Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 4,
+    "updated": 0,
+    "duplicates": 0,
+    "failed": 0
+  },
+  {
+    "id": "log-1794996052084-7483n",
+    "timestamp": "2026-11-18T10:00:52.084Z",
+    "type": "ADMIN_REJECTION",
+    "scheme_id": "datagov-sukanya-samriddhi",
+    "scheme_name": "Sukanya Samriddhi Account (SSA)",
+    "reason": "Test rejection reason"
+  },
+  {
+    "id": "log-1794996052103-kv6u2",
+    "timestamp": "2026-11-18T10:00:52.103Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 3,
+    "updated": 0,
+    "duplicates": 1,
+    "failed": 0
+  },
+  {
+    "id": "log-1794996603711-vzhfi",
+    "timestamp": "2026-11-18T10:10:03.711Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 3,
+    "updated": 1,
+    "duplicates": 0,
+    "failed": 0
+  },
+  {
+    "id": "log-1794996845806-m1rqm",
+    "timestamp": "2026-11-18T10:14:05.806Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 3,
+    "updated": 0,
+    "duplicates": 1,
+    "failed": 0
+  },
+  {
+    "id": "log-1794996948492-ti8pm",
+    "timestamp": "2026-11-18T10:15:48.493Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 3,
+    "updated": 0,
+    "duplicates": 1,
+    "failed": 0
+  },
+  {
+    "id": "log-1794998026331-571fa",
+    "timestamp": "2026-11-18T10:33:46.331Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1794998070400-hjy5n",
+    "timestamp": "2026-11-18T10:34:30.400Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1795008423934-xfotg",
+    "timestamp": "2026-11-18T13:27:03.935Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1795275209445-6f6c6",
+    "timestamp": "2026-11-21T15:33:29.445Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1795278211403-tv6z5",
+    "timestamp": "2026-11-21T16:23:31.403Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1795278213738-ukl26",
+    "timestamp": "2026-11-21T16:23:33.738Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 2,
+    "updated": 0,
+    "duplicates": 2,
+    "failed": 0
+  },
+  {
+    "id": "log-1795280131769-ra4u7",
+    "timestamp": "2026-11-21T16:55:31.769Z",
+    "source_id": "Multi-Source Authorized Pipeline",
+    "total_checked": 4,
+    "new_queued": 1,
+    "updated": 0,
+    "duplicates": 3,
+    "failed": 0
+  }
+]

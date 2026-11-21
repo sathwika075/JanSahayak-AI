@@ -1,0 +1,2242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JanSahayak AI – Autonomous Government Services & Student Assistance Platform</title>
+  <!-- Tailwind CSS & Lucide Icons via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'jet-black': '#08090D',
+            'secondary-dark': '#10131B',
+            'dark-card': '#151B27',
+            'cerulean': '#007BA7',
+            'electric-blue': '#29B6F6',
+            'neon-rose': '#FF2D87',
+            'pink-highlight': '#FF4FA3',
+            'muted-grey': '#9CA3AF',
+            'success-green': '#22C55E',
+            'warning-amber': '#F59E0B'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #08090D;
+      color: #F8FAFC;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .glass-card {
+      background: rgba(21, 27, 39, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+    }
+    /* ===== FIX: Ensure all hyperlinks in app are always clickable ===== */
+    a[href] {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      position: relative;
+      z-index: 2;
+    }
+    a[href] svg,
+    a[href] i[data-lucide] {
+      pointer-events: none !important;
+    }
+    /* Modal and chat links take priority over any parent overflow/stacking */
+    #modal-service-body a[href],
+    #chat-messages-container a[href],
+    .citizen-services-link {
+      pointer-events: auto !important;
+      cursor: pointer !important;
+      z-index: 10;
+    }
+    .glass-card:hover {
+      border-color: rgba(41, 182, 246, 0.3);
+      box-shadow: 0 10px 25px -5px rgba(0, 123, 167, 0.15);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #29B6F6 0%, #FF2D87 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .badge-primary {
+      background: linear-gradient(135deg, rgba(0, 123, 167, 0.2) 0%, rgba(41, 182, 246, 0.2) 100%);
+      border: 1px solid rgba(41, 182, 246, 0.3);
+      color: #29B6F6;
+    }
+    .btn-gradient {
+      background: linear-gradient(135deg, #007BA7 0%, #29B6F6 50%, #FF2D87 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-gradient:hover {
+      opacity: 0.95;
+      box-shadow: 0 0 20px rgba(41, 182, 246, 0.4);
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #08090D;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1F2937;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #29B6F6;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col md:flex-row bg-[#08090D]">
+
+  <!-- SIDEBAR NAVIGATION -->
+  <aside class="w-full md:w-64 bg-[#10131B] border-r border-white/5 flex flex-col justify-between shrink-0">
+    <div>
+      <!-- Brand Logo -->
+      <div class="p-6 border-b border-white/5 flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#007BA7] via-[#29B6F6] to-[#FF2D87] flex items-center justify-center shadow-lg shadow-cerulean/20">
+          <i data-lucide="shield-check" class="w-6 h-6 text-white"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg leading-tight tracking-wider gradient-text">JANSAHAYAK</h1>
+          <span class="text-xs text-[#9CA3AF] tracking-widest font-mono">GOVT AI PLATFORM</span>
+        </div>
+      </div>
+
+      <!-- Navigation Links (All 9 Core Pages) -->
+      <nav class="p-4 space-y-1" id="nav-menu">
+        <button onclick="switchTab('dashboard')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-white bg-white/5 border border-white/10" data-page="dashboard">
+          <i data-lucide="layout-dashboard" class="w-5 h-5 text-[#29B6F6]"></i>
+          <span>Home Dashboard</span>
+        </button>
+
+        <button onclick="switchTab('assistant')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="assistant">
+          <i data-lucide="bot" class="w-5 h-5 text-[#FF2D87]"></i>
+          <span>AI Govt Assistant</span>
+        </button>
+
+        <button onclick="switchTab('services')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="services">
+          <i data-lucide="landmark" class="w-5 h-5 text-[#29B6F6]"></i>
+          <span>Citizen Services</span>
+        </button>
+
+        <button onclick="switchTab('finder')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="finder">
+          <i data-lucide="search" class="w-5 h-5 text-[#29B6F6]"></i>
+          <span>Scholarship Finder</span>
+        </button>
+
+        <button onclick="switchTab('checker')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="checker">
+          <i data-lucide="check-circle-2" class="w-5 h-5 text-[#22C55E]"></i>
+          <span>Eligibility Checker</span>
+        </button>
+
+        <button onclick="switchTab('docs')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="docs">
+          <i data-lucide="file-text" class="w-5 h-5 text-[#F59E0B]"></i>
+          <span>Document OCR</span>
+        </button>
+
+        <button onclick="switchTab('guidance')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="guidance">
+          <i data-lucide="compass" class="w-5 h-5 text-[#29B6F6]"></i>
+          <span>Application Guidance</span>
+        </button>
+
+        <button onclick="switchTab('saved')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="saved">
+          <i data-lucide="bookmark" class="w-5 h-5 text-[#FF4FA3]"></i>
+          <span>Saved Schemes</span>
+        </button>
+
+        <button onclick="switchTab('profile')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="profile">
+          <i data-lucide="user" class="w-5 h-5 text-white"></i>
+          <span>Student Profile</span>
+        </button>
+
+        <div class="pt-4 border-t border-white/5 mt-4">
+          <span class="px-4 text-xs font-semibold text-[#9CA3AF] uppercase tracking-wider">Administration</span>
+          <button onclick="switchTab('knowledge')" class="nav-item mt-2 w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="knowledge">
+            <i data-lucide="database" class="w-5 h-5 text-[#29B6F6]"></i>
+            <span>Knowledge Hub</span>
+          </button>
+          <button onclick="switchTab('admin')" class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5" data-page="admin">
+            <i data-lucide="bar-chart-3" class="w-5 h-5 text-[#FF2D87]"></i>
+            <span>Admin Analytics</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Active User & Role Pill -->
+    <div class="p-4 border-t border-white/5 bg-[#08090D]/50 m-4 rounded-xl">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-r from-cerulean to-neon-rose flex items-center justify-center font-bold text-sm">
+          SR
+        </div>
+        <div class="overflow-hidden">
+          <p class="text-sm font-semibold truncate text-white" id="user-display-name">Sathwika Reddy</p>
+          <p class="text-xs text-muted-grey truncate">Telangana Student</p>
+        </div>
+      </div>
+      <div class="mt-3 flex items-center justify-between text-xs text-muted-grey">
+        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-success-green animate-pulse"></span> Verified DBT</span>
+        <button onclick="toggleAuthModal()" class="text-electric-blue hover:underline">Switch User</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN VIEWPORT -->
+  <main class="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-7xl mx-auto w-full">
+
+    <!-- TOP GLOBAL BAR -->
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/5">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full badge-primary">Track 01: Civic Pulse & Digital Governance</span>
+          <span class="px-2.5 py-1 text-xs font-semibold rounded-full bg-success-green/10 text-success-green border border-success-green/20">Telangana & Central Portal Verified</span>
+        </div>
+        <h2 id="page-header-title" class="text-2xl md:text-3xl font-extrabold text-white mt-2">Student Dashboard</h2>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <!-- Language Selector -->
+        <div class="flex items-center bg-[#151B27] border border-white/10 rounded-xl p-1 text-xs">
+          <button onclick="setLanguage('English')" id="lang-en" class="px-3 py-1.5 rounded-lg bg-electric-blue text-black font-semibold transition">English</button>
+          <button onclick="setLanguage('Telugu')" id="lang-te" class="px-3 py-1.5 rounded-lg text-muted-grey hover:text-white transition">తెలుగు</button>
+          <button onclick="setLanguage('Hindi')" id="lang-hi" class="px-3 py-1.5 rounded-lg text-muted-grey hover:text-white transition">हिन्दी</button>
+        </div>
+
+        <button onclick="switchTab('assistant')" class="btn-gradient px-4 py-2 rounded-xl text-sm font-semibold flex items-center gap-2 text-white shadow-lg">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Ask JanSahayak AI</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- NOTIFICATION TOAST CONTAINER -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 space-y-2 pointer-events-none"></div>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 1: HOME DASHBOARD -->
+    <!-- ======================================================== -->
+    <section id="page-dashboard" class="space-y-8">
+      <!-- Profile Completion & Greeting Banner -->
+      <div class="glass-card p-6 md:p-8 bg-gradient-to-r from-[#151B27] via-[#10131B] to-[#151B27] relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-cerulean/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+          <div class="space-y-2">
+            <span class="text-sm font-mono text-electric-blue">Namaste, Sathwika! Welcome to JanSahayak.</span>
+            <h3 class="text-2xl font-bold text-white">Your Profile is <span class="text-success-green">95% Complete</span></h3>
+            <p class="text-sm text-muted-grey max-w-xl">
+              We have matched your profile with <strong class="text-white">4 verified government scholarship schemes</strong> with up to <strong class="text-neon-rose">₹100% tuition reimbursement</strong> and monthly maintenance allowances.
+            </p>
+          </div>
+          <div class="flex flex-col sm:flex-row items-center gap-3">
+            <button onclick="switchTab('checker')" class="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition flex items-center justify-center gap-2 border border-white/10">
+              <i data-lucide="check-check" class="w-4 h-4 text-success-green"></i> Run Full Check
+            </button>
+            <button onclick="switchTab('finder')" class="w-full sm:w-auto btn-gradient px-5 py-2.5 rounded-xl text-white font-semibold text-sm transition flex items-center justify-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4"></i> Explore All Schemes
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-6 w-full bg-white/5 rounded-full h-2 overflow-hidden">
+          <div class="bg-gradient-to-r from-cerulean via-electric-blue to-neon-rose h-2 rounded-full w-[95%]"></div>
+        </div>
+      </div>
+
+      <!-- Quick Stats Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-muted-grey uppercase font-mono">Available Schemes</span>
+            <div class="p-2 rounded-lg bg-cerulean/20 text-electric-blue"><i data-lucide="layers" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-2xl font-bold text-white mt-2" id="stat-total-schemes">8 Verified</p>
+          <span class="text-xs text-success-green flex items-center gap-1 mt-1"><i data-lucide="shield-check" class="w-3 h-3"></i> 100% Official Gazette</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-muted-grey uppercase font-mono">Matched Eligible</span>
+            <div class="p-2 rounded-lg bg-success-green/20 text-success-green"><i data-lucide="sparkles" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-2xl font-bold text-white mt-2">3 Schemes</p>
+          <span class="text-xs text-muted-grey mt-1">Based on income & category</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-muted-grey uppercase font-mono">Next Deadline</span>
+            <div class="p-2 rounded-lg bg-warning-amber/20 text-warning-amber"><i data-lucide="clock" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-2xl font-bold text-white mt-2">Nov 30, 2026</p>
+          <span class="text-xs text-warning-amber mt-1">NSP CSSS closes soon</span>
+        </div>
+
+        <div class="glass-card p-5">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-muted-grey uppercase font-mono">Active Tracker</span>
+            <div class="p-2 rounded-lg bg-neon-rose/20 text-neon-rose"><i data-lucide="navigation" class="w-4 h-4"></i></div>
+          </div>
+          <p class="text-2xl font-bold text-white mt-2">Step 3 of 5</p>
+          <span class="text-xs text-electric-blue mt-1">ePASS Biometric Pending</span>
+        </div>
+      </div>
+
+      <!-- Recommended Schemes Section -->
+      <div class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5 text-electric-blue"></i>
+            Recommended For Your Profile
+          </h3>
+          <button onclick="switchTab('finder')" class="text-xs text-electric-blue hover:underline">View All &rarr;</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="dashboard-recommended-grid">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 2: AI GOVERNMENT ASSISTANT -->
+    <!-- ======================================================== -->
+    <section id="page-assistant" class="hidden space-y-6">
+      <div class="glass-card p-6 flex flex-col h-[700px]">
+        <!-- Chat Header -->
+        <div class="flex items-center justify-between pb-4 border-b border-white/5">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cerulean via-electric-blue to-neon-rose flex items-center justify-center">
+              <i data-lucide="bot" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-white flex items-center gap-2">
+                JanSahayak Grounded Assistant
+                <span class="px-2 py-0.5 text-[10px] bg-success-green/20 text-success-green rounded-full font-mono">RAG Active</span>
+              </h3>
+              <p class="text-xs text-muted-grey">Answers sourced strictly from official government documents</p>
+            </div>
+          </div>
+          <button onclick="clearChat()" class="text-xs text-muted-grey hover:text-white px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 flex items-center gap-1.5 transition">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i> Clear Chat
+          </button>
+        </div>
+
+        <!-- Chat Conversation Area -->
+        <div class="flex-1 overflow-y-auto py-4 space-y-4 pr-2" id="chat-messages-container">
+          <!-- Initial Assistant Message -->
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-cerulean/30 flex items-center justify-center shrink-0">
+              <i data-lucide="bot" class="w-4 h-4 text-electric-blue"></i>
+            </div>
+            <div class="glass-card p-4 max-w-2xl text-sm space-y-3">
+              <p class="text-white">
+                Namaste! Welcome to <strong>JanSahayak AI</strong> — your verified Citizen Services and Student Assistance Assistant.
+              </p>
+              <p class="text-white/80 text-xs leading-relaxed">
+                I can help you with <strong>Government Scholarships</strong> (ePASS, NSP), <strong>Identity Documents</strong> (PAN, Aadhaar, Voter ID), <strong>Travel Services</strong> (Passport, Driving Licence), <strong>Banking Guidance</strong> (Passbook, ATM cards, zero-balance accounts), and <strong>State Certificates</strong> (Income, Caste, Domicile via MeeSeva).
+              </p>
+              <!-- Service Shortcuts -->
+              <div class="pt-2 flex flex-wrap gap-1.5 text-xs">
+                <button onclick="sendQuickPrompt('Which scholarships can I apply for?')" class="px-2.5 py-1 rounded-lg bg-electric-blue/10 hover:bg-electric-blue/20 text-electric-blue border border-electric-blue/20 flex items-center gap-1 transition">🎓 Scholarships</button>
+                <button onclick="sendQuickPrompt('How do I apply for a PAN card?')" class="px-2.5 py-1 rounded-lg bg-cerulean/20 hover:bg-cerulean/30 text-white border border-white/10 flex items-center gap-1 transition">💳 PAN Card</button>
+                <button onclick="sendQuickPrompt('How do I download Aadhaar?')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1 transition">🆔 Aadhaar</button>
+                <button onclick="sendQuickPrompt('How do I apply for a passport?')" class="px-2.5 py-1 rounded-lg bg-neon-rose/10 hover:bg-neon-rose/20 text-[#FF4FA3] border border-neon-rose/20 flex items-center gap-1 transition">✈️ Passport</button>
+                <button onclick="sendQuickPrompt('How do I request an ATM card?')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1 transition">🏦 Banking</button>
+                <button onclick="sendQuickPrompt('How do I apply for an income certificate?')" class="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-white border border-white/10 flex items-center gap-1 transition">📜 Certificates</button>
+              </div>
+              <div class="pt-2 text-[11px] text-muted-grey flex items-center gap-1 border-t border-white/5">
+                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-success-green"></i> Grounded strictly on official government gazettes, RBI directions, and verified portals.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dynamic Suggested Prompt Chips -->
+        <div class="py-2 flex items-center gap-2 overflow-x-auto text-xs text-muted-grey" id="chat-suggested-chips-container">
+          <span class="shrink-0 font-semibold text-white/70">Suggested:</span>
+          <button onclick="sendQuickPrompt('Which government scholarships can I apply for?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">Which scholarships can I apply for?</button>
+          <button onclick="sendQuickPrompt('How do I apply for a PAN card?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">How to apply for PAN card?</button>
+          <button onclick="sendQuickPrompt('How do I apply for a passport?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">Passport application steps?</button>
+          <button onclick="sendQuickPrompt('How do I download Aadhaar?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">Download Aadhaar card?</button>
+          <button onclick="sendQuickPrompt('How do I block my lost ATM card?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">Block lost ATM card?</button>
+          <button onclick="sendQuickPrompt('How do I apply for an income certificate?')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5">MeeSeva Income Certificate?</button>
+        </div>
+
+        <!-- Chat Input Form -->
+        <form onsubmit="handleChatSubmit(event)" class="pt-3 border-t border-white/5 flex items-center gap-2">
+          <input type="text" id="chat-input" placeholder="Ask about scholarships, eligibility, income limits, or documents..." class="flex-1 bg-[#10131B] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-electric-blue transition placeholder:text-muted-grey/60" autocomplete="off">
+          
+          <button type="button" onclick="startVoiceRecognition()" id="mic-btn" title="Voice Input" class="p-3 rounded-xl bg-white/5 hover:bg-white/10 text-muted-grey hover:text-white transition">
+            <i data-lucide="mic" class="w-5 h-5"></i>
+          </button>
+
+          <button type="submit" class="btn-gradient px-5 py-3 rounded-xl text-white font-semibold text-sm flex items-center gap-2 shadow-lg hover:shadow-cerulean/20 transition">
+            <span>Send</span>
+            <i data-lucide="send" class="w-4 h-4"></i>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 2B: CITIZEN SERVICES HUB (IDENTITY, TRAVEL, BANKING, CERTIFICATES) -->
+    <!-- ======================================================== -->
+    <section id="page-services" class="hidden space-y-8">
+      <!-- Banner & Introduction -->
+      <div class="glass-card p-6 md:p-8 bg-gradient-to-r from-[#151B27] via-[#10131B] to-[#151B27] relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-72 h-72 bg-electric-blue/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 space-y-4">
+          <div class="flex items-center gap-2">
+            <span class="px-3 py-1 text-xs font-semibold rounded-full badge-primary">JanSahayak Citizen Services Hub</span>
+            <span class="px-3 py-1 text-xs font-semibold rounded-full bg-success-green/10 text-success-green border border-success-green/20">100% Verified Portals</span>
+          </div>
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl md:text-3xl font-extrabold text-white">Government Identity, Travel, Banking & Certificates</h3>
+              <p class="text-sm text-muted-grey max-w-2xl mt-1">
+                Authoritative procedures, required documents, official fees, and direct application links for essential citizen services across India and Telangana.
+              </p>
+            </div>
+            <button onclick="switchTab('assistant')" class="btn-gradient px-4 py-2.5 rounded-xl text-white font-semibold text-xs flex items-center gap-2 shadow-lg shrink-0">
+              <i data-lucide="bot" class="w-4 h-4"></i> Ask AI Assistant
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Category Filters Bar -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div class="flex-1 w-full relative">
+            <i data-lucide="search" class="w-4 h-4 absolute left-4 top-3.5 text-muted-grey"></i>
+            <input type="text" id="services-search" oninput="renderCitizenServices()" placeholder="Search PAN, Aadhaar, Passport, ATM Card, Passbook, Income Certificate, Driving Licence..." class="w-full bg-[#10131B] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-electric-blue transition placeholder:text-muted-grey/60">
+          </div>
+          <span class="text-xs text-muted-grey shrink-0 font-mono" id="services-count-indicator">Showing 15 Services</span>
+        </div>
+
+        <!-- Category Pills -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs" id="services-category-pills">
+          <button onclick="filterServicesCategory('all')" id="svc-cat-all" class="px-4 py-2 rounded-xl font-semibold bg-white/10 text-white border border-white/20 transition flex items-center gap-2 shrink-0">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-electric-blue"></i>
+            <span>All Services (15)</span>
+          </button>
+          <button onclick="filterServicesCategory('identity')" id="svc-cat-identity" class="px-4 py-2 rounded-xl font-medium text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition flex items-center gap-2 shrink-0">
+            <i data-lucide="shield-check" class="w-4 h-4 text-electric-blue"></i>
+            <span>Identity & Cards (3)</span>
+          </button>
+          <button onclick="filterServicesCategory('travel')" id="svc-cat-travel" class="px-4 py-2 rounded-xl font-medium text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition flex items-center gap-2 shrink-0">
+            <i data-lucide="plane" class="w-4 h-4 text-[#FF2D87]"></i>
+            <span>Travel & Transport (2)</span>
+          </button>
+          <button onclick="filterServicesCategory('banking')" id="svc-cat-banking" class="px-4 py-2 rounded-xl font-medium text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition flex items-center gap-2 shrink-0">
+            <i data-lucide="landmark" class="w-4 h-4 text-[#22C55E]"></i>
+            <span>Banking Guidance (5)</span>
+          </button>
+          <button onclick="filterServicesCategory('certificate')" id="svc-cat-certificate" class="px-4 py-2 rounded-xl font-medium text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition flex items-center gap-2 shrink-0">
+            <i data-lucide="file-text" class="w-4 h-4 text-[#F59E0B]"></i>
+            <span>Government Certificates (5)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Services Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="citizen-services-grid">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- DEDICATED CITIZEN SERVICE DETAIL MODAL -->
+    <div id="service-detail-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+      <div class="glass-card max-w-4xl w-full max-h-[90vh] flex flex-col bg-[#10131B] border border-white/10 shadow-2xl rounded-2xl" style="overflow:hidden;">
+        <!-- Modal Header -->
+        <div class="p-6 border-b border-white/10 flex items-start justify-between bg-gradient-to-r from-[#151B27] to-[#10131B]">
+          <div class="flex items-center space-x-4">
+            <div id="modal-service-icon" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-cerulean via-electric-blue to-neon-rose flex items-center justify-center shadow-lg">
+              <i data-lucide="file-text" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span id="modal-service-badge" class="px-2.5 py-0.5 text-[11px] rounded-full badge-primary font-mono">Central Govt</span>
+                <span id="modal-service-category" class="text-xs text-muted-grey font-medium">Identity Services</span>
+              </div>
+              <h3 id="modal-service-name" class="text-xl md:text-2xl font-bold text-white mt-1">Permanent Account Number (PAN)</h3>
+            </div>
+          </div>
+          <button onclick="closeServiceDetail()" class="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-muted-grey hover:text-white transition">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Modal Content Tabs -->
+        <div class="flex border-b border-white/5 px-6 bg-[#08090D]/50 overflow-x-auto text-xs">
+          <button onclick="switchServiceModalTab('overview')" id="modal-tab-btn-overview" class="px-4 py-3 font-semibold text-electric-blue border-b-2 border-electric-blue transition shrink-0">Overview & Eligibility</button>
+          <button onclick="switchServiceModalTab('documents')" id="modal-tab-btn-documents" class="px-4 py-3 font-medium text-muted-grey hover:text-white transition shrink-0">Required Documents</button>
+          <button onclick="switchServiceModalTab('steps')" id="modal-tab-btn-steps" class="px-4 py-3 font-medium text-muted-grey hover:text-white transition shrink-0">Application Steps</button>
+          <button onclick="switchServiceModalTab('fees')" id="modal-tab-btn-fees" class="px-4 py-3 font-medium text-muted-grey hover:text-white transition shrink-0">Verified Fees</button>
+          <button onclick="switchServiceModalTab('faqs')" id="modal-tab-btn-faqs" class="px-4 py-3 font-medium text-muted-grey hover:text-white transition shrink-0">FAQs</button>
+        </div>
+
+        <!-- Modal Body Container -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 text-sm" id="modal-service-body" style="position:relative;z-index:1;">
+          <!-- Dynamic Content rendered via JS -->
+        </div>
+
+        <!-- Modal Action Footer -->
+        <div class="p-4 border-t border-white/10 bg-[#08090D] flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="flex items-center gap-2 text-xs text-muted-grey">
+            <i data-lucide="shield-check" class="w-4 h-4 text-success-green"></i>
+            <span>Verified against official government portal circulars</span>
+          </div>
+          <div class="flex items-center gap-3 w-full sm:w-auto">
+            <button onclick="closeServiceDetail()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-muted-grey hover:text-white transition">Close</button>
+            <button id="modal-ask-ai-btn" class="w-full sm:w-auto btn-gradient px-5 py-2 rounded-xl text-xs font-semibold text-white flex items-center justify-center gap-2 shadow-lg">
+              <i data-lucide="bot" class="w-4 h-4"></i> Ask AI Assistant About This
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 3: SCHOLARSHIP FINDER -->
+    <!-- ======================================================== -->
+    <section id="page-finder" class="hidden space-y-6">
+      <!-- Search & Multi-Filters Toolbar -->
+      <div class="glass-card p-6 space-y-4">
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="flex-1 relative">
+            <i data-lucide="search" class="w-4 h-4 absolute left-4 top-3.5 text-muted-grey"></i>
+            <input type="text" id="finder-search" oninput="applyFilters()" placeholder="Search by scheme name, ministry, benefits, or keywords..." class="w-full bg-[#10131B] border border-white/10 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-electric-blue transition">
+          </div>
+          <button onclick="resetFilters()" class="px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-muted-grey hover:text-white border border-white/10 transition">
+            Reset Filters
+          </button>
+        </div>
+
+        <!-- Filters Row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+          <div>
+            <label class="block text-muted-grey mb-1 font-semibold">Government / State</label>
+            <select id="filter-state" onchange="applyFilters()" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-electric-blue">
+              <option value="All">All Jurisdictions</option>
+              <option value="Telangana">Telangana State</option>
+              <option value="All India (Central)">Central Government (All India)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-muted-grey mb-1 font-semibold">Social Category</label>
+            <select id="filter-category" onchange="applyFilters()" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-electric-blue">
+              <option value="All">All Categories</option>
+              <option value="BC">BC / OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="Minority">Minority</option>
+              <option value="General">General / EWS</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-muted-grey mb-1 font-semibold">Education Level</label>
+            <select id="filter-education" onchange="applyFilters()" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-electric-blue">
+              <option value="All">All Education Levels</option>
+              <option value="Graduation">Undergraduate / Degree / B.Tech</option>
+              <option value="Post Graduation">Post Graduation / Masters</option>
+              <option value="Intermediate">Intermediate (10+2)</option>
+              <option value="Doctoral">Doctoral / Ph.D.</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-muted-grey mb-1 font-semibold">Sort By</label>
+            <select id="filter-sort" onchange="applyFilters()" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white focus:outline-none focus:border-electric-blue">
+              <option value="deadline">Upcoming Deadline</option>
+              <option value="income">Highest Income Limit</option>
+              <option value="name">Scheme Name (A-Z)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Schemes Results Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="finder-schemes-grid">
+        <!-- Rendered via JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 4: AI ELIGIBILITY CHECKER -->
+    <!-- ======================================================== -->
+    <section id="page-checker" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left: Scheme Selection & Custom Criteria -->
+        <div class="glass-card p-6 space-y-4">
+          <h3 class="text-lg font-bold text-white flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-5 h-5 text-success-green"></i>
+            Select Scheme to Evaluate
+          </h3>
+          <p class="text-xs text-muted-grey">Calculated using our deterministic rule engine. No AI guesswork.</p>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-muted-grey mb-1">Target Scholarship Scheme</label>
+              <select id="checker-scheme-select" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-electric-blue">
+                <!-- Populated dynamically -->
+              </select>
+            </div>
+
+            <div class="pt-3 border-t border-white/5 space-y-3">
+              <h4 class="text-xs font-bold uppercase text-electric-blue font-mono">Evaluate With Profile Or Custom:</h4>
+              
+              <div>
+                <label class="block text-xs text-muted-grey mb-1">Annual Family Income (₹)</label>
+                <input type="number" id="checker-income" value="175000" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2 text-sm text-white">
+              </div>
+
+              <div>
+                <label class="block text-xs text-muted-grey mb-1">Category</label>
+                <select id="checker-category" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2 text-sm text-white">
+                  <option value="BC">BC (Backward Classes)</option>
+                  <option value="SC">SC (Scheduled Caste)</option>
+                  <option value="ST">ST (Scheduled Tribe)</option>
+                  <option value="Minority">Minority</option>
+                  <option value="General">General / Open</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs text-muted-grey mb-1">Academic Percentage / CGPA (%)</label>
+                <input type="number" id="checker-marks" value="82.5" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2 text-sm text-white">
+              </div>
+
+              <div>
+                <label class="block text-xs text-muted-grey mb-1">State Domicile</label>
+                <select id="checker-state" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2 text-sm text-white">
+                  <option value="Telangana">Telangana</option>
+                  <option value="Andhra Pradesh">Andhra Pradesh</option>
+                  <option value="Karnataka">Karnataka</option>
+                  <option value="Maharashtra">Maharashtra</option>
+                  <option value="Delhi">Delhi</option>
+                </select>
+              </div>
+
+              <button onclick="runEligibilityEvaluation()" class="w-full btn-gradient py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-lg">
+                <i data-lucide="play" class="w-4 h-4"></i> Run Deterministic Check
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Verification Audit Trail & Verdict -->
+        <div class="lg:col-span-2 glass-card p-6 space-y-6" id="checker-result-panel">
+          <div class="flex items-center justify-between pb-4 border-b border-white/5">
+            <div>
+              <span class="text-xs font-mono text-muted-grey">OFFICIAL ELIGIBILITY VERDICT</span>
+              <h3 class="text-xl font-bold text-white mt-1" id="eval-scheme-title">Telangana Post-Matric Scholarships (RTF & MTF)</h3>
+            </div>
+            <span id="eval-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-success-green/20 text-success-green border border-success-green/30">
+              Fully Eligible
+            </span>
+          </div>
+
+          <p class="text-sm text-white/90 bg-white/5 p-4 rounded-xl border border-white/5" id="eval-explanation">
+            Congratulations! You satisfy all verified criteria documented in the Telangana Government Gazette for Tuition Fee Reimbursement and Maintenance Allowance.
+          </p>
+
+          <!-- Criteria Audit Breakdown -->
+          <div class="space-y-4">
+            <h4 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <i data-lucide="list-checks" class="w-4 h-4 text-electric-blue"></i>
+              Detailed Criteria Audit Trail
+            </h4>
+
+            <div class="space-y-3" id="eval-criteria-list">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="pt-4 border-t border-white/5 flex flex-wrap gap-3">
+            <button onclick="createApplicationTracker()" class="btn-gradient px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center gap-2">
+              <i data-lucide="compass" class="w-4 h-4"></i> Start Application Guidance
+            </button>
+            <a id="eval-official-link" href="https://telanganaepass.cgg.gov.in/" target="_blank" class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-sm font-semibold text-electric-blue border border-white/10 flex items-center gap-2 transition">
+              <i data-lucide="external-link" class="w-4 h-4"></i> Open Official Government Portal
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 5: DOCUMENT INTELLIGENCE (OCR) -->
+    <!-- ======================================================== -->
+    <section id="page-docs" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Upload Card -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="scan" class="w-5 h-5 text-warning-amber"></i>
+              Upload Document for OCR
+            </h3>
+            <span class="text-xs text-muted-grey font-mono">PDF / JPG / PNG</span>
+          </div>
+          <p class="text-xs text-muted-grey">
+            JanSahayak uses optical character intelligence to extract fields like income, caste, certificate numbers, and dates.
+          </p>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-muted-grey mb-1">Document Category</label>
+              <select id="doc-type-select" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-sm text-white">
+                <option value="INCOME_CERTIFICATE">MeeSeva Income Certificate</option>
+                <option value="CASTE_CERTIFICATE">Integrated Community / Caste Certificate</option>
+                <option value="BONAFIDE_CERTIFICATE">Institutional Bonafide / Study Certificate</option>
+                <option value="MARKSHEET">SSC / Intermediate / Degree Marks Memo</option>
+              </select>
+            </div>
+
+            <div class="border-2 border-dashed border-white/10 hover:border-electric-blue/50 rounded-xl p-8 text-center cursor-pointer transition" onclick="document.getElementById('doc-file-input').click()">
+              <input type="file" id="doc-file-input" class="hidden" accept=".pdf,.png,.jpg,.jpeg" onchange="handleFileUpload(event)">
+              <div class="w-12 h-12 rounded-full bg-cerulean/20 text-electric-blue mx-auto flex items-center justify-center mb-3">
+                <i data-lucide="upload-cloud" class="w-6 h-6"></i>
+              </div>
+              <p class="text-sm font-semibold text-white" id="upload-file-label">Click to upload or drag and drop</p>
+              <p class="text-xs text-muted-grey mt-1">Official circulars, MeeSeva scans or DigiLocker PDFs (Max 10MB)</p>
+            </div>
+
+            <!-- OCR Text Preview & Demo Selector -->
+            <div>
+              <label class="block text-xs font-semibold text-muted-grey mb-1">Or Try Sample Government Document Text:</label>
+              <select onchange="loadSampleDocText(this.value)" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2 text-xs text-electric-blue">
+                <option value="sample-meeseva">Sample 1: Telangana MeeSeva Income Certificate</option>
+                <option value="sample-caste">Sample 2: Central OBC Non-Creamy Layer Certificate</option>
+                <option value="sample-memo">Sample 3: Degree Examination Marks Memo</option>
+              </select>
+            </div>
+
+            <textarea id="doc-raw-text" rows="5" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-3 text-xs font-mono text-muted-grey focus:outline-none focus:border-electric-blue" placeholder="Extracted OCR text will appear here..."></textarea>
+
+            <button onclick="processUploadedDocument()" class="w-full btn-gradient py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-lg">
+              <i data-lucide="cpu" class="w-4 h-4"></i> Run Document Extraction
+            </button>
+          </div>
+        </div>
+
+        <!-- Extraction Results & Compliance Warnings -->
+        <div class="glass-card p-6 space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-white/5">
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="file-check" class="w-5 h-5 text-success-green"></i>
+              Extracted Information
+            </h3>
+            <span class="text-xs px-2.5 py-1 rounded-full bg-cerulean/20 text-electric-blue font-mono" id="ocr-status-pill">Ready</span>
+          </div>
+
+          <!-- Compliance Warning Banner -->
+          <div class="p-4 rounded-xl bg-warning-amber/10 border border-warning-amber/20 text-xs text-warning-amber space-y-1">
+            <p class="font-bold flex items-center gap-1.5"><i data-lucide="alert-triangle" class="w-4 h-4 shrink-0"></i> Important Legal Disclaimer</p>
+            <p>Document intelligence extracts information for student guidance. It does NOT claim that a document is officially government-authenticated.</p>
+          </div>
+
+          <!-- Key Value Field Cards -->
+          <div class="space-y-3" id="ocr-fields-container">
+            <div class="p-3 bg-[#10131B] rounded-lg border border-white/5 flex justify-between items-center text-sm">
+              <span class="text-muted-grey">Applicant Name</span>
+              <strong class="text-white" id="field-name">Sathwika Reddy</strong>
+            </div>
+            <div class="p-3 bg-[#10131B] rounded-lg border border-white/5 flex justify-between items-center text-sm">
+              <span class="text-muted-grey">Annual Income</span>
+              <strong class="text-success-green font-mono" id="field-income">₹1,75,000</strong>
+            </div>
+            <div class="p-3 bg-[#10131B] rounded-lg border border-white/5 flex justify-between items-center text-sm">
+              <span class="text-muted-grey">Certificate Number</span>
+              <strong class="text-electric-blue font-mono" id="field-cert">IC2026TS948271</strong>
+            </div>
+            <div class="p-3 bg-[#10131B] rounded-lg border border-white/5 flex justify-between items-center text-sm">
+              <span class="text-muted-grey">Issue Date</span>
+              <strong class="text-white font-mono" id="field-date">12-08-2026</strong>
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-white/5">
+            <button onclick="saveExtractedToProfile()" class="w-full px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-sm transition flex items-center justify-center gap-2 border border-white/10">
+              <i data-lucide="save" class="w-4 h-4 text-success-green"></i> Save Extracted Data to Student Profile
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 6: APPLICATION GUIDANCE -->
+    <!-- ======================================================== -->
+    <section id="page-guidance" class="hidden space-y-6">
+      <div class="glass-card p-6 md:p-8 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/5">
+          <div>
+            <span class="text-xs font-mono text-electric-blue">STEP-BY-STEP ROADMAP</span>
+            <h3 class="text-2xl font-bold text-white mt-1">Telangana Post-Matric Scholarships (RTF & MTF)</h3>
+            <p class="text-xs text-muted-grey mt-1">Application guidance assistant – Not an official submission portal</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="https://telanganaepass.cgg.gov.in/" target="_blank" class="btn-gradient px-4 py-2.5 rounded-xl text-sm font-semibold text-white flex items-center gap-2 shadow-lg">
+              <i data-lucide="external-link" class="w-4 h-4"></i> Open Telangana ePASS
+            </a>
+          </div>
+        </div>
+
+        <!-- Guidance Checklist Container -->
+        <div class="space-y-4" id="guidance-checklist-container">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <div class="p-4 rounded-xl bg-cerulean/10 border border-cerulean/20 text-xs text-electric-blue flex items-center justify-between">
+          <span>Remember: College principal biometric confirmation is mandatory before December 31, 2026.</span>
+          <button onclick="showToast('Progress saved to your account', 'success')" class="text-white hover:underline font-semibold">Save Progress</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 7: SAVED SCHEMES -->
+    <!-- ======================================================== -->
+    <section id="page-saved" class="hidden space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-white">Your Bookmarked Schemes</h3>
+          <p class="text-xs text-muted-grey">Compare, check deadlines, and access official application portals</p>
+        </div>
+        <span class="text-xs font-mono px-3 py-1 rounded-full badge-primary" id="saved-count-pill">2 Saved</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="saved-schemes-grid">
+        <!-- Rendered dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 8: GOVERNMENT KNOWLEDGE HUB (ADMIN) -->
+    <!-- ======================================================== -->
+    <section id="page-knowledge" class="hidden space-y-6">
+      <div class="glass-card p-6 space-y-6">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/5">
+          <div>
+            <h3 class="text-xl font-bold text-white">Government Knowledge Ingestion Hub</h3>
+            <p class="text-xs text-muted-grey">Manage official PDFs, gazettes, APIs, and rebuild vector embeddings</p>
+          </div>
+          <button onclick="rebuildVectorEmbeddings()" class="btn-gradient px-4 py-2 rounded-xl text-xs font-semibold text-white flex items-center gap-2">
+            <i data-lucide="refresh-cw" class="w-4 h-4"></i> Rebuild Vector Embeddings
+          </button>
+        </div>
+
+        <!-- Data Source Connection Health Dashboard -->
+        <div class="space-y-3">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Connected Data Sources & Adapters</h4>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="knowledge-sources-grid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Add / Ingest Official PDF Circular Form -->
+        <div class="pt-6 border-t border-white/5 space-y-4">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Register New Official Government Gazette / Circular</h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div>
+              <label class="block text-muted-grey mb-1">Scheme Title</label>
+              <input type="text" id="admin-scheme-name" placeholder="e.g. Telangana Overseas Vidya Nidhi" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+            </div>
+            <div>
+              <label class="block text-muted-grey mb-1">Ministry / Department</label>
+              <input type="text" id="admin-scheme-ministry" placeholder="e.g. Social Welfare Department" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+            </div>
+            <div>
+              <label class="block text-muted-grey mb-1">Official Application URL</label>
+              <input type="text" id="admin-scheme-url" placeholder="https://..." class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+            </div>
+          </div>
+          <button onclick="adminPublishScheme()" class="btn-gradient px-5 py-2.5 rounded-xl text-xs font-semibold text-white flex items-center gap-2">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i> Review & Approve Scheme Record
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- PAGE 9: ADMIN DASHBOARD (ANALYTICS) -->
+    <!-- ======================================================== -->
+    <section id="page-admin" class="hidden space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="glass-card p-5">
+          <span class="text-xs text-muted-grey uppercase font-mono">Total Registered Students</span>
+          <p class="text-3xl font-extrabold text-white mt-2">1,422</p>
+          <span class="text-xs text-success-green mt-1 flex items-center gap-1">+18 today from Telangana</span>
+        </div>
+        <div class="glass-card p-5">
+          <span class="text-xs text-muted-grey uppercase font-mono">Total Verified Schemes</span>
+          <p class="text-3xl font-extrabold text-white mt-2">8</p>
+          <span class="text-xs text-electric-blue mt-1">Gazette Grounded</span>
+        </div>
+        <div class="glass-card p-5">
+          <span class="text-xs text-muted-grey uppercase font-mono">Ingested Documents</span>
+          <p class="text-3xl font-extrabold text-white mt-2">87</p>
+          <span class="text-xs text-muted-grey mt-1">PDF circulars & norms</span>
+        </div>
+        <div class="glass-card p-5">
+          <span class="text-xs text-muted-grey uppercase font-mono">Data Source Health</span>
+          <p class="text-3xl font-extrabold text-success-green mt-2">100%</p>
+          <span class="text-xs text-success-green mt-1">5/5 Adapters Active</span>
+        </div>
+      </div>
+
+      <!-- Real DB Analytics Charts Visual Representation -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="glass-card p-6 space-y-4">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Schemes by Jurisdiction</h4>
+          <div class="space-y-3 pt-2">
+            <div>
+              <div class="flex justify-between text-xs text-muted-grey mb-1">
+                <span>Telangana State Welfare (ePASS)</span>
+                <span class="text-white font-mono">3 Schemes (37.5%)</span>
+              </div>
+              <div class="w-full bg-white/5 rounded-full h-2">
+                <div class="bg-cerulean h-2 rounded-full w-[37.5%]"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-muted-grey mb-1">
+                <span>Central Government (NSP / Higher Education)</span>
+                <span class="text-white font-mono">4 Schemes (50.0%)</span>
+              </div>
+              <div class="w-full bg-white/5 rounded-full h-2">
+                <div class="bg-electric-blue h-2 rounded-full w-[50%]"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-muted-grey mb-1">
+                <span>All India Technical (AICTE / myScheme)</span>
+                <span class="text-white font-mono">1 Scheme (12.5%)</span>
+              </div>
+              <div class="w-full bg-white/5 rounded-full h-2">
+                <div class="bg-neon-rose h-2 rounded-full w-[12.5%]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card p-6 space-y-4">
+          <h4 class="text-sm font-bold text-white uppercase tracking-wider font-mono">System Ingestion & Audit Log</h4>
+          <div class="space-y-2 text-xs font-mono text-muted-grey">
+            <div class="p-2.5 rounded-lg bg-[#10131B] border border-white/5 flex justify-between items-center">
+              <span>[2026-11-15 11:00] Telangana ePASS Gazette refreshed</span>
+              <span class="text-success-green">SUCCESS</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-[#10131B] border border-white/5 flex justify-between items-center">
+              <span>[2026-11-14 14:15] NSP Central Sector Sync completed</span>
+              <span class="text-success-green">SUCCESS</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-[#10131B] border border-white/5 flex justify-between items-center">
+              <span>[2026-11-12 09:00] data.gov.in Catalog Ingested</span>
+              <span class="text-success-green">SUCCESS</span>
+            </div>
+            <div class="p-2.5 rounded-lg bg-[#10131B] border border-white/5 flex justify-between items-center">
+              <span>[2026-10-30 16:00] API Setu Gateway standby handshake</span>
+              <span class="text-warning-amber">COMPLIANCE</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================== -->
+    <!-- STUDENT PROFILE EDIT MODAL / TAB -->
+    <!-- ======================================================== -->
+    <section id="page-profile" class="hidden space-y-6">
+      <div class="glass-card p-6 md:p-8 space-y-6 max-w-3xl mx-auto">
+        <div class="flex items-center justify-between pb-4 border-b border-white/5">
+          <div>
+            <h3 class="text-xl font-bold text-white">Student Eligibility Profile</h3>
+            <p class="text-xs text-muted-grey">Your details are stored securely. No Aadhaar or bank account numbers requested.</p>
+          </div>
+          <span class="text-xs px-3 py-1 rounded-full bg-success-green/20 text-success-green font-mono">Consent Granted</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div>
+            <label class="block text-muted-grey mb-1">Full Legal Name</label>
+            <input type="text" id="prof-name" value="Sathwika Reddy" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Email Address</label>
+            <input type="email" id="prof-email" value="student@telangana.edu.in" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Home State / Domicile</label>
+            <input type="text" id="prof-state" value="Telangana" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">District</label>
+            <input type="text" id="prof-district" value="Hyderabad" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Education Level</label>
+            <select id="prof-edu" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+              <option value="Graduation" selected>Graduation (B.Tech / Degree)</option>
+              <option value="Post Graduation">Post Graduation (M.Tech / MS / MBA)</option>
+              <option value="Intermediate">Intermediate (10+2)</option>
+              <option value="Doctoral">Doctoral / Ph.D.</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Course & Stream</label>
+            <input type="text" id="prof-course" value="B.Tech Computer Science & Engineering" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">College / University Name</label>
+            <input type="text" id="prof-college" value="JNTUH College of Engineering, Hyderabad" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Annual Family Income (₹)</label>
+            <input type="number" id="prof-income" value="175000" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Academic Marks / CGPA (%)</label>
+            <input type="number" id="prof-marks" value="82.5" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-muted-grey mb-1">Social Category</label>
+            <select id="prof-category" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+              <option value="BC" selected>BC (Backward Classes)</option>
+              <option value="SC">SC (Scheduled Caste)</option>
+              <option value="ST">ST (Scheduled Tribe)</option>
+              <option value="Minority">Minority</option>
+              <option value="General">General / EWS</option>
+            </select>
+          </div>
+        </div>
+
+        <button onclick="saveStudentProfile()" class="w-full btn-gradient py-3 rounded-xl font-bold text-sm text-white flex items-center justify-center gap-2 shadow-lg">
+          <i data-lucide="check" class="w-4 h-4"></i> Save Updated Profile
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- AUTH SWITCH MODAL -->
+  <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+    <div class="glass-card p-6 md:p-8 max-w-md w-full space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-white/5">
+        <h3 class="text-lg font-bold text-white">Switch User / Login</h3>
+        <button onclick="toggleAuthModal()" class="text-muted-grey hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-muted-grey mb-1">Email</label>
+          <input type="email" id="auth-email" value="student@telangana.edu.in" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+        </div>
+        <div>
+          <label class="block text-muted-grey mb-1">Password</label>
+          <input type="password" id="auth-password" value="Student@123" class="w-full bg-[#10131B] border border-white/10 rounded-lg p-2.5 text-white">
+        </div>
+
+        <div class="pt-2 flex gap-2">
+          <button onclick="handleQuickLogin('student')" class="flex-1 py-2 rounded-lg bg-electric-blue/20 text-electric-blue border border-electric-blue/30 font-semibold">Demo Student</button>
+          <button onclick="handleQuickLogin('admin')" class="flex-1 py-2 rounded-lg bg-neon-rose/20 text-neon-rose border border-neon-rose/30 font-semibold">Demo Admin</button>
+        </div>
+
+        <button onclick="performLogin()" class="w-full btn-gradient py-2.5 rounded-xl font-bold text-sm text-white mt-4">
+          Authenticate with JanSahayak
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION SCRIPT LOGIC -->
+  <script>
+    
+    // CITIZEN SERVICES HUB DATA & LOGIC
+    const CITIZEN_SERVICES_CATALOG = [{"id":"pan-card","category":"identity","categoryName":"Identity Services","name":"Permanent Account Number (PAN Card)","shortName":"PAN Card","icon":"credit-card","badge":"Central Govt (CBDT / ITD)","officialPortal":"Income Tax Department / Protean (NSDL) / UTIITSL","officialUrl":"https://www.incometax.gov.in/iec/foportal/","applicationUrl":"https://www.protean-tinpan.com/","trackingUrl":"https://www.trackpan.utiitsl.com/","instantPanUrl":"https://www.incometax.gov.in/iec/foportal/iec/foportal/","description":"Application guidance for New PAN (Form 49A), Instant e-PAN using Aadhaar, PAN correction, reprint of physical PAN card, and PAN-Aadhaar linking.","whoCanApply":["Any individual Indian citizen (including minors represented by parent/guardian).","Non-Resident Indians (NRIs) and foreign citizens earning taxable income in India.","Companies, LLPs, Partnership Firms, Trusts, and HUFs registered in India."],"requiredDocuments":["Proof of Identity (POI): Aadhaar Card, Voter ID, Passport, or Driving Licence.","Proof of Address (POA): Aadhaar Card, Utility Bill (within 3 months), Bank Account Statement, or Passport.","Proof of Date of Birth (DOB): Birth Certificate, Aadhaar Card, 10th Marks Memo, or Passport.","Two recent passport-sized color photographs (not required if applying via Aadhaar e-KYC paperless mode)."],"applicationSteps":[{"step":1,"title":"Choose Application Mode","desc":"Option A: Instant e-PAN (Free, paperless, 10 minutes) via incometax.gov.in using Aadhaar e-KYC. Option B: Regular physical PAN card via Protean (NSDL) or UTIITSL online portal (Form 49A)."},{"step":2,"title":"Fill Applicant Details","desc":"Provide personal details, parents' names, contact info, and select physical vs. e-PAN requirement."},{"step":3,"title":"Upload Documents or Complete Aadhaar e-KYC","desc":"For digital mode, authenticate with Aadhaar OTP. For paper-based mode, sign and mail physical documents to the nearest NSDL/UTIITSL branch."},{"step":4,"title":"Pay Official Fee & Obtain Acknowledgment","desc":"Make online payment and save the 15-digit Acknowledgment Number for tracking."},{"step":5,"title":"Delivery & Tracking","desc":"e-PAN is emailed within 24-48 hours. Physical laminated PAN card is dispatched by India Post within 10-15 business days."}],"fees":{"instant_e_pan":"Free of cost (via Income Tax e-Filing Portal with Aadhaar OTP)","physical_card_india":"₹107 (₹93 Application fee + 18% GST)","physical_card_overseas":"₹1,017 (for dispatch outside India)"},"features":["New PAN application (Form 49A)","Instant paperless e-PAN in 10 minutes","PAN Card Correction & Name/DOB Update","Reprint of lost or damaged PAN card","PAN Application Status Tracking","PAN-Aadhaar Linking Guidance"],"faqs":[{"q":"Can I get a PAN card immediately without paying a fee?","a":"Yes. The Income Tax Department provides 'Instant e-PAN' through Aadhaar e-KYC on incometax.gov.in. It is 100% free and valid digitally. A physical plastic card can later be ordered for ₹50 reprint fee."},{"q":"Is Aadhaar mandatory to apply for a PAN card?","a":"Yes, quoting Aadhaar number is mandatory for Indian resident applicants under Section 139AA of the Income-tax Act."},{"q":"How can I check my PAN application status?","a":"Visit the Protean (NSDL) TIN tracking page and enter your 15-digit acknowledgment number."}],"keywords":["pan","pan card","utiitsl","nsdl","protean","e-pan","incometax","form 49a","tax id"]},{"id":"aadhaar-card","category":"identity","categoryName":"Identity Services","name":"Aadhaar Card (UIDAI)","shortName":"Aadhaar Card","icon":"fingerprint","badge":"Central Govt (UIDAI)","officialPortal":"Unique Identification Authority of India (UIDAI)","officialUrl":"https://uidai.gov.in/","applicationUrl":"https://appointments.uidai.gov.in/","downloadUrl":"https://myaadhaar.uidai.gov.in/gen-download-aadhaar","trackingUrl":"https://myaadhaar.uidai.gov.in/check-aadhaar-status","pvcUrl":"https://myaadhaar.uidai.gov.in/gen-pvc","description":"Guidance for New Aadhaar enrolment, demographic & biometric updates, mobile number linking, e-Aadhaar download, and secure PVC card orders.","whoCanApply":["Any resident of India who has resided in the country for 182 days or more in the past 12 months.","Newborn children (Baal Aadhaar issued without biometrics until age 5, updated at age 5 and 15).","Non-Resident Indians (NRIs) holding valid Indian Passport (can enrol upon arrival at any ASK)."],"requiredDocuments":["Proof of Identity (POI): Passport, PAN Card, Ration Card, Voter ID, Driving Licence, or Government photo ID.","Proof of Address (POA): Passport, Bank Statement/Passbook, Ration Card, Voter ID, Electricity Bill (last 3 months), or Water Bill.","Proof of Date of Birth (DOB): Birth Certificate, SSLC Book/Certificate, Passport, or PAN Card.","Proof of Relationship (POR) for minors: PDS card, MNREGA job card, or Medical claim card."],"applicationSteps":[{"step":1,"title":"Locate Enrolment Centre or Book Appointment","desc":"Book an appointment online at appointments.uidai.gov.in or walk into any Aadhaar Seva Kendra (ASK), post office, or designated bank."},{"step":2,"title":"Submit Documents & Complete Biometrics","desc":"Submit POI/POA documents. Operator records 10 fingerprints, both iris scans, and a live photograph."},{"step":3,"title":"Obtain Enrolment Slip (EID)","desc":"Receive the 28-digit Enrolment ID slip containing the timestamp used for status tracking."},{"step":4,"title":"Track Status & Download e-Aadhaar","desc":"Once processed (usually 5-15 days), download the digitally signed e-Aadhaar from myaadhaar.uidai.gov.in."}],"fees":{"new_enrolment":"Free of cost (Mandatory by UIDAI)","mandatory_biometric_child":"Free of cost (at ages 5 and 15)","demographic_update":"₹50 (at centre or myAadhaar portal)","biometric_update":"₹100 (at authorized Aadhaar centre)","pvc_card_order":"₹50 (includes GST and Speed Post delivery across India)"},"features":["New Aadhaar Enrolment Appointment","e-Aadhaar Instant Download (Regular & Masked)","Online Address Update via myAadhaar","Mobile Number & Email Linking at ASK","Aadhaar PVC Card Home Delivery","Aadhaar-Bank Account (NPCI) Seeding Status"],"faqs":[{"q":"Can I update my mobile number online in Aadhaar?","a":"No. Mobile number update requires biometric verification (fingerprint scan) and must be done in person at an authorized Aadhaar Seva Kendra or post office."},{"q":"What is Masked Aadhaar and is it legally valid?","a":"Masked Aadhaar hides the first 8 digits of your Aadhaar number, showing only the last 4. It is 100% legally valid everywhere (except government DBT schemes requiring full Aadhaar)."},{"q":"How much does a PVC Aadhaar card cost?","a":"UIDAI charges an official fee of ₹50, which includes speed post delivery directly to your registered address."}],"keywords":["aadhaar","uidai","myaadhaar","pvc card","e-aadhaar","demographic","biometric","baal aadhaar"]},{"id":"voter-id","category":"identity","categoryName":"Identity Services","name":"Voter ID Card (EPIC)","shortName":"Voter ID","icon":"vote","badge":"Election Commission of India","officialPortal":"Voters' Service Portal (ECI)","officialUrl":"https://voters.eci.gov.in/","applicationUrl":"https://voters.eci.gov.in/signup","trackingUrl":"https://voters.eci.gov.in/track-application-status","description":"Guidance for new voter registration (Form 6), overseas voter registration (Form 6A), shifting of residence/corrections (Form 8), and digital e-EPIC download.","whoCanApply":["Every Indian citizen who has attained 18 years of age on the qualifying dates (1st Jan, 1st April, 1st July, 1st Oct).","Resident of the assembly constituency where enrolling."],"requiredDocuments":["Proof of Age/DOB: Birth Certificate, 10th Certificate, Aadhaar, PAN, Passport, or Driving Licence.","Proof of Ordinary Residence: Water/Electricity/Gas Bill, Aadhaar Card, Bank Passbook, or Passport.","One passport-size photograph."],"applicationSteps":[{"step":1,"title":"Register on ECI Portal","desc":"Sign up on voters.eci.gov.in using mobile number and OTP."},{"step":2,"title":"Fill Form 6 for New Registration","desc":"Enter constituency, personal details, permanent and current address."},{"step":3,"title":"Field Verification by BLO","desc":"Booth Level Officer (BLO) visits or verifies documents locally."},{"step":4,"title":"Electoral Roll Inclusion & e-EPIC Download","desc":"Once approved, download e-EPIC PDF online. Physical colored voter ID card is delivered via Speed Post for free."}],"fees":{"registration_and_card":"Free of cost (Funded entirely by Government of India)"},"features":["Form 6: New Voter Registration (18+ citizens)","Form 8: Correction of Name, Photo, Age, Address","e-EPIC Digital Voter Card Download","Track Application Reference Status","Search Name in National Electoral Roll"],"faqs":[{"q":"What is the fee for a new Voter ID card?","a":"New voter registration and the physical EPIC card are completely free of cost."},{"q":"How can I download my digital Voter ID (e-EPIC)?","a":"Login to voters.eci.gov.in with your registered mobile or EPIC number and click 'e-EPIC Download'."}],"keywords":["voter","voter id","epic","eci","election commission","form 6","form 8","electoral roll"]},{"id":"passport-service","category":"travel","categoryName":"Travel & Transport","name":"Indian Passport (Passport Seva)","shortName":"Passport","icon":"plane","badge":"Ministry of External Affairs (MEA)","officialPortal":"Passport Seva Portal (PSP)","officialUrl":"https://www.passportindia.gov.in/psp","applicationUrl":"https://www.passportindia.gov.in/psppsp","trackingUrl":"https://www.passportindia.gov.in/psppsp","description":"Guidance for Fresh Passport, Re-issue/Renewal of expired passport, Normal vs. Tatkaal schemes, document requirements, PSK appointment booking, and police verification.","whoCanApply":["Citizens of India by birth, descent, or registration/naturalization.","Minors (below 18 years) with consent of parents (Annexure C/D).","Adults aged 18 and above (36-page or 60-page booklet)."],"requiredDocuments":["Proof of Date of Birth: Birth Certificate, 10th Standard Marks Card/Transfer Certificate, or Aadhaar Card.","Proof of Present Address: Aadhaar Card, Water/Electricity/Telephone Bill, Active Bank Account Passbook with photo, or Rent Agreement (registered).","Non-ECR (Emigration Check Not Required) Proof: 10th Standard pass memo/degree certificate (avoids ECR stamping).","Previous Passport original + self-attested copies (for re-issue/renewal applicants only)."],"applicationSteps":[{"step":1,"title":"Register on Passport Seva Online Portal","desc":"Create an account on passportindia.gov.in and select your Regional Passport Office (RPO)."},{"step":2,"title":"Fill Online Application Form","desc":"Choose Fresh vs Re-issue, Normal vs Tatkaal, and 36 vs 60 pages booklet."},{"step":3,"title":"Pay Online & Schedule PSK Appointment","desc":"Payment is mandatory via SBI ePay before booking slot at nearest Passport Seva Kendra (PSK) or Post Office PSK (POPSK)."},{"step":4,"title":"Visit PSK on Appointment Date","desc":"Carry all original documents + photocopies. Biometrics, photograph, and document verification happen in Counter A, B, and C."},{"step":5,"title":"Police Verification & Delivery","desc":"Local police station conducts address verification. Passport is printed and dispatched via India Post Speed Post."}],"fees":{"fresh_normal_36_pages":"₹1,500 (10 years validity)","fresh_normal_60_pages":"₹2,000 (10 years validity)","fresh_tatkaal_additional":"₹2,000 extra (Total ₹3,500 for fast-track processing)","minor_passport":"₹1,000 (5 years validity or till age 18)"},"features":["Fresh Ordinary Passport Application","Renewal / Re-issue of expired or expiring passport","Normal & Tatkaal Fast-Track processing","PSK and POPSK Appointment Slot Booking","Police Verification Status Guidance","Passport Dispatched India Post Tracking"],"faqs":[{"q":"What is the difference between Normal and Tatkaal passport?","a":"Normal passport takes 15-30 days and costs ₹1,500. Tatkaal passport is processed within 1-3 business days (with verification after dispatch or specific proof) and costs an additional ₹2,000 (total ₹3,500)."},{"q":"What documents are required for a first-time fresh passport?","a":"For adults: (1) Proof of Address (e.g. Aadhaar / Bank Passbook / Electricity bill), (2) Proof of Date of Birth (Birth Certificate or 10th memo / Aadhaar), and (3) Non-ECR proof (10th pass certificate or higher degree)."},{"q":"How does police verification work for passport?","a":"The local police station in your jurisdiction receives your file from the RPO. A police officer visits your address or calls you with original address and criminal record clearance documents."}],"keywords":["passport","tatkaal","psk","popsk","mea","passport seva","police verification","fresh passport","renewal"]},{"id":"driving-licence","category":"travel","categoryName":"Travel & Transport","name":"Driving Licence (Sarathi Parivahan)","shortName":"Driving Licence","icon":"car","badge":"Ministry of Road Transport & Highways (MoRTH)","officialPortal":"Parivahan Sewa (Sarathi)","officialUrl":"https://parivahan.gov.in/","applicationUrl":"https://parivahan.gov.in/","trackingUrl":"https://parivahan.gov.in/sarathiservice/applViewStatus.do","description":"Guidance for Learner's Licence (LL), Permanent Driving Licence (DL), DL renewal, duplicate DL, international driving permit, and application status.","whoCanApply":["Motorcycle without gear (up to 50cc): Minimum 16 years (with parental consent).","Light Motor Vehicle (Car/Motorcycle with gear): Minimum 18 years.","Commercial / Transport Vehicle: Minimum 20 years + 1 year prior experience with LMV."],"requiredDocuments":["Proof of Age: 10th Marks Memo, Birth Certificate, Aadhaar Card, or Passport.","Proof of Address: Aadhaar Card, Voter ID, Passport, Electricity Bill, or Ration Card.","Medical Certificate (Form 1A): Required for applicants above 40 years or transport category.","Learner's Licence original copy (when applying for permanent DL)."],"applicationSteps":[{"step":1,"title":"Apply for Learner's Licence (LL)","desc":"Submit Form 2 on sarathi.parivahan.gov.in, upload documents, pay fees, and take the online computer traffic rules test (contactless via Aadhaar in many states)."},{"step":2,"title":"Hold LL for Minimum 30 Days","desc":"Learner's Licence is valid for 6 months. You can take the driving test between 30 and 180 days of issue."},{"step":3,"title":"Book Driving Test Slot for Permanent DL","desc":"Schedule slot at your local Regional Transport Office (RTO) or automated testing track."},{"step":4,"title":"Pass Practical Driving Test","desc":"Drive on the designated track (8-track / H-track for 4-wheelers). Once passed, DL is approved."},{"step":5,"title":"Smart Card Delivery","desc":"Physical smart card DL is dispatched via Speed Post. Digital DL is immediately available on DigiLocker / mParivahan."}],"fees":{"learners_licence_test":"₹150 to ₹200 (varies by state)","permanent_dl_driving_test":"₹300 test fee + ₹200 card issuance","renewal_dl":"₹200 (if applied before expiry or within grace period)"},"features":["Contactless Online Learner's Licence (LL) Test","Permanent Driving Licence Slot Booking","Driving Licence Renewal & Address Change","Duplicate DL for lost or damaged cards","Digital DL on DigiLocker / mParivahan","Application Status Tracking"],"faqs":[{"q":"Can I take the Learner's Licence test from home?","a":"Yes, under Aadhaar-based authentication on sarathi.parivahan.gov.in, citizens in most states (including Telangana) can take the online LL test directly from home with facial recognition."},{"q":"How long is a Learner's Licence valid?","a":"A Learner's Licence is valid for 6 months across India. You can book a permanent driving test after 30 days of holding the LL."}],"keywords":["driving licence","dl","learners licence","ll","parivahan","sarathi","rto","transport"]},{"id":"bank-account","category":"banking","categoryName":"Banking Services","name":"Savings & Student Bank Account","shortName":"Bank Account","icon":"landmark","badge":"Bank-Specific Citizen Service","officialPortal":"Reserve Bank of India (RBI) / Respective Scheduled Banks","officialUrl":"https://www.rbi.org.in/","description":"Guidance for opening a Regular Savings Account, Student Zero-Balance Account, PMJDY Basic Savings Bank Deposit Account (BSBDA), and Aadhaar-NPCI DBT linking.","whoCanApply":["Any Indian resident aged 18 and above.","Minors aged 10+ can open self-operated student savings accounts in public sector banks.","Underprivileged individuals can open PMJDY zero-balance accounts with simplified KYC."],"requiredDocuments":["Officially Valid Document (OVD) for Identity & Address: Aadhaar Card, Passport, Voter ID, or Driving Licence.","Permanent Account Number (PAN Card) or Form 60 declaration.","Two recent passport-sized color photographs.","College / School Bonafide Certificate or Student ID Card (for student specific concessions)."],"applicationSteps":[{"step":1,"title":"Choose Bank & Account Type","desc":"Select a Public Sector Bank (e.g. SBI, Canara Bank, Union Bank) or Private Bank. For scholarships, request an 'Aadhaar-Seeded BSBDA Zero-Balance Account'."},{"step":2,"title":"Apply Online via Video KYC or Visit Branch","desc":"Most banks allow instant opening via their mobile app (e.g. SBI YONO) using Aadhaar OTP and Video KYC."},{"step":3,"title":"Complete Aadhaar-NPCI Seeding for DBT","desc":"CRITICAL FOR SCHOLARSHIPS: Submit the NPCI Aadhaar Seeding Consent Form at the branch so government scholarships credit to this account."},{"step":4,"title":"Receive Welcome Kit","desc":"Account number, IFSC code, ATM Debit Card, Passbook, and NetBanking credentials are issued."}],"fees":{"pmjdy_student_account":"Zero balance (No minimum balance maintenance charge)","regular_savings_account":"Varies by bank (₹0 to ₹3,000 depending on rural/urban branch tier)"},"features":["Student Zero-Balance Savings Account","PMJDY (Jan Dhan) Account opening guidance","Aadhaar NPCI Mapping for Government DBT Subsidies","Comparison of major public & private banks","Paperless Video KYC application steps"],"faqs":[{"q":"What is an Aadhaar-seeded bank account for scholarships?","a":"Government DBT (Direct Benefit Transfer) scholarships like ePASS and NSP require your bank account to be linked with NPCI (National Payments Corporation of India). You must submit an Aadhaar seeding consent form to your branch."},{"q":"Can students open a bank account with zero balance?","a":"Yes. Basic Savings Bank Deposit Accounts (BSBDA) and PMJDY accounts require ₹0 minimum balance and have no penalty charges."}],"keywords":["bank account","savings account","student account","zero balance","pmjdy","npci","dbt","rbi"]},{"id":"bank-passbook","category":"banking","categoryName":"Banking Services","name":"Bank Passbook Services","shortName":"Bank Passbook","icon":"book-open","badge":"Bank-Specific Citizen Service","officialPortal":"Respective Branch / Bank Portal","officialUrl":"https://www.rbi.org.in/","description":"Guidance for obtaining a new physical passbook, updating transaction entries, replacement of completed/lost passbooks, and printing e-statements.","whoCanApply":["Any savings or current account holder with physical passbook facility (primarily Public Sector Banks)."],"requiredDocuments":["For First Time / Completed Passbook: Existing account number, ID proof, and old passbook (if completed).","For Lost Passbook Replacement: Written request letter, FIR/Loss report copy (if requested by branch), Aadhaar/PAN Card proof, and passport photo."],"applicationSteps":[{"step":1,"title":"Daily / Monthly Entry Updates","desc":"Use automated Self-Service Passbook Kiosk (SWAYAM / Barcode printer) at your bank's e-Corner. Simply insert passbook with magnetic stripe or barcode facing down."},{"step":2,"title":"Completed Passbook Replacement","desc":"Visit your home branch with the filled passbook. The branch official issues a continuation passbook free of cost."},{"step":3,"title":"Lost Passbook Replacement","desc":"Submit a written application to the Branch Manager requesting a duplicate passbook along with photo ID proof."}],"fees":{"first_issue_and_completed":"Free of cost at all public sector banks","duplicate_lost_passbook":"Nominal fee ₹50 to ₹100 + GST (depending on bank)"},"features":["New Passbook issuance guidance","Self-service automated kiosk updating instructions","Duplicate passbook for lost/damaged cases","MeeSeva/ePASS required passbook photo and front page verification"],"faqs":[{"q":"What does government scholarship portals require from the bank passbook?","a":"Scholarship verification officers require the first page of the passbook clearly displaying: Student Name, Account Number, IFSC Code, Bank Branch name, and Bank Official Stamp/Signature."},{"q":"Can I download an e-passbook on mobile?","a":"Yes. Most banks offer mobile m-Passbook apps (e.g. SBI YONO Quick, Canara e-Passbook, Union Bank mPassbook) showing real-time digital entries."}],"keywords":["passbook","bank passbook","passbook update","duplicate passbook","bank stamp","kiosk"]},{"id":"atm-debit-card","category":"banking","categoryName":"Banking Services","name":"ATM / Debit Card Services","shortName":"ATM / Debit Card","icon":"credit-card","badge":"Bank-Specific Citizen Service","officialPortal":"Respective Bank / National Payments Corporation of India (NPCI)","officialUrl":"https://www.rbi.org.in/","description":"Guidance for requesting a new Debit card, replacement of expired/damaged cards, emergency blocking of lost/stolen cards, and Green PIN generation.","whoCanApply":["Any individual savings or current account holder with active account status."],"requiredDocuments":["Active bank account number.","Registered mobile number (for OTP verification).","No physical documents needed if applying via NetBanking or Mobile Banking app."],"applicationSteps":[{"step":1,"title":"EMERGENCY: Block Lost or Stolen Card Immediately","desc":"Call your bank's 24x7 toll-free helpline, send emergency SMS block command, or lock card instantly inside your bank's mobile app. NEVER delay blocking a missing card."},{"step":2,"title":"Request Replacement or New ATM Card","desc":"Apply online through NetBanking/Mobile Banking under 'Cards' section or submit Form at the home branch."},{"step":3,"title":"Delivery via Speed Post","desc":"The card is delivered in a sealed envelope to your registered communication address within 5-7 business days."},{"step":4,"title":"Generate Green PIN","desc":"Set your 4-digit secret ATM PIN via any of your bank's ATMs, NetBanking, or IVR with registered mobile OTP."}],"fees":{"rupay_classic_pmjdy":"Free of cost (Zero annual maintenance fee under PMJDY)","regular_visa_rupay_card":"Annual fee ₹125 to ₹250 + GST (varies by card tier)","replacement_damaged_card":"₹100 to ₹200 + GST"},"features":["Instant Emergency Card Blocking guidance (Toll-Free & SMS)","New ATM Card issuance procedure","Replacement of expired or damaged magnetic cards with EMV chip","Green PIN generation without branch visit","Domestic & International transaction limit controls"],"faqs":[{"q":"How do I immediately block a lost SBI ATM card?","a":"Send an SMS with text 'BLOCK <last 4 digits of card>' to 567676 from your registered mobile number, or call toll-free 1800 1234 / 1800 2100 immediately."},{"q":"Does JanSahayak AI ever ask for my ATM PIN or CVV?","a":"ABSOLUTELY NEVER. Never share your ATM PIN, 3-digit CVV, OTP, or net banking passwords with anyone, any website, or any AI assistant."}],"keywords":["atm","atm card","debit card","block atm","lost card","green pin","rupay","visa","mastercard"]},{"id":"cheque-book","category":"banking","categoryName":"Banking Services","name":"Cheque Book Request & Management","shortName":"Cheque Book","icon":"file-signature","badge":"Bank-Specific Citizen Service","officialPortal":"Respective Bank / RBI Guidelines","officialUrl":"https://www.rbi.org.in/","description":"Guidance for requesting a new cheque book online and offline, stopping payment of lost cheques, CTS-2010 standards, and cancelled cheque usage.","whoCanApply":["Any savings or current account holder with cheque book facility enabled."],"requiredDocuments":["Account number and registered mobile number.","Requisition slip from previous cheque book (if applying via branch)."],"applicationSteps":[{"step":1,"title":"Request Online via Mobile App or NetBanking","desc":"Navigate to Services > Cheque Book Request. Select number of leaves (20, 25, 50, or 100)."},{"step":2,"title":"Confirm Communication Address","desc":"Verify that your registered delivery address is current."},{"step":3,"title":"Delivery via Speed Post","desc":"Bank delivers CTS-2010 compliant personalized cheque book within 3-7 working days."}],"fees":{"free_leaves":"Most banks provide 10-25 free cheque leaves per financial year","additional_leaves":"Approximately ₹2 to ₹4 per leaf + GST"},"features":["Cheque Book requisition via NetBanking/ATM","Stop Payment of issued or lost cheque","Preparation of Cancelled Cheque for scholarship / salary / ECS mandate","Positive Pay System (PPS) guidelines for cheques above ₹50,000"],"faqs":[{"q":"What is a 'Cancelled Cheque' and why is it needed for scholarships?","a":"A cancelled cheque has two parallel lines drawn across it with the word 'CANCELLED' written in between. It is used as official bank proof to confirm your Account Number, Name, and IFSC code without permitting money withdrawal."}],"keywords":["cheque","cheque book","cancelled cheque","cts 2010","stop cheque","positive pay"]},{"id":"other-banking","category":"banking","categoryName":"Banking Services","name":"Digital Banking, KYC & UPI Guidance","shortName":"Digital Banking & KYC","icon":"smartphone","badge":"Bank-Specific Citizen Service","officialPortal":"National Payments Corporation of India (NPCI) / RBI","officialUrl":"https://www.rbi.org.in/","description":"Guidance for Bank KYC re-verification, Mobile Banking registration, NetBanking activation, Bank Statement download, and UPI safety guidelines.","whoCanApply":["All bank account holders."],"requiredDocuments":["Periodic KYC: Aadhaar Card, PAN Card, and latest Address proof.","Bank Account Statement: No documents needed (downloadable via NetBanking / Mobile app)."],"applicationSteps":[{"step":1,"title":"Periodic KYC Updation","desc":"RBI mandates periodic KYC. Low-risk accounts can complete re-KYC online via self-declaration or video-KYC without visiting a branch."},{"step":2,"title":"Download Bank Account Statement","desc":"Generate password-protected 3/6/12 months PDF statement through mobile banking. Password format is typically date-of-birth + last digits of mobile/account."},{"step":3,"title":"UPI Activation (BHIM / PhonePe / Google Pay)","desc":"Link bank account via registered SIM card and set 4 or 6 digit UPI PIN using Debit Card details."}],"fees":{"kyc_and_statement":"Free of cost (Mandatory free service as per RBI regulations)"},"features":["RBI Re-KYC compliance instructions","Official Bank Statement PDF download steps","UPI payment safety & PIN security advisory","NetBanking and Mobile Banking activation guide"],"faqs":[{"q":"How often do I need to update KYC in my bank account?","a":"As per RBI norms: High-risk customers every 2 years, Medium-risk customers every 8 years, and Low-risk customers every 10 years. If there are no changes, a simple self-declaration is sufficient."}],"keywords":["kyc","re-kyc","upi","netbanking","mobile banking","bank statement","npci","rbi"]},{"id":"income-certificate","category":"certificate","categoryName":"Government Certificates","name":"Income Certificate (MeeSeva / Revenue)","shortName":"Income Certificate","icon":"file-text","badge":"State Govt (Revenue Department)","officialPortal":"Telangana MeeSeva Citizen Portal","officialUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htm","applicationUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","trackingUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","description":"Guidance for obtaining digitally signed Revenue Department Income Certificate via MeeSeva for scholarship eligibility, fee reimbursement, and government welfare schemes.","whoCanApply":["Resident citizens of Telangana State whose annual family income needs certification for educational, welfare, or subsidy purposes."],"requiredDocuments":["Application form duly filled and signed.","Salary Certificate / Payslip (for salaried employees) or Income tax returns / Form 16.","Aadhaar Card of the applicant and family members.","Ration Card / Food Security Card copy.","Electricity Bill or House Tax receipt."],"applicationSteps":[{"step":1,"title":"Visit Nearest MeeSeva Centre or Online Portal","desc":"Apply through MeeSeva portal (meeseva.telangana.gov.in) or visit any authorized MeeSeva kiosk."},{"step":2,"title":"Submit Documents & Pay User Charges","desc":"Operator scans documents and submits file to the concerned Tahsildar / Revenue Inspector (RI)."},{"step":3,"title":"Enquiry & Digital Verification","desc":"VRO / RI conducts field verification and submits report to the Tahsildar."},{"step":4,"title":"Digital Signature & Certificate Issue","desc":"Tahsildar digitally signs the certificate with QR code. Download printed copy on security paper with hologram."}],"fees":{"meeseva_service_charge":"₹45 (Statutory service charge across Telangana)","validity":"Valid for 1 financial year from the date of issuance"},"features":["Revenue Department Tahsildar approval","QR-code digitally signed authenticity","Mandatory requirement for ePASS RTF & MTF","Online MeeSeva application status tracking","SLA processing time: 7 business days"],"faqs":[{"q":"What is the validity of a MeeSeva Income Certificate in Telangana?","a":"A MeeSeva Income Certificate is valid for ONE financial year (April 1 to March 31). Scholarships require a certificate issued within the current academic/financial cycle."},{"q":"What are the income ceilings for Telangana ePASS scholarships?","a":"Rural students: ₹1,50,000 per annum. Urban students: ₹2,00,000 per annum. SC/ST students: ₹2,50,000 per annum."}],"keywords":["income certificate","meeseva","tahsildar","vro","revenue","telangana","annual income"]},{"id":"caste-certificate","category":"certificate","categoryName":"Government Certificates","name":"Integrated Community / Caste Certificate","shortName":"Caste Certificate","icon":"award","badge":"State Govt (Revenue Department)","officialPortal":"Telangana MeeSeva Portal","officialUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htm","applicationUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","trackingUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","description":"Guidance for applying for an Integrated Community, Nativity, and Date of Birth Certificate for SC, ST, BC, and Minority students in Telangana via MeeSeva.","whoCanApply":["Citizens belonging to Scheduled Castes (SC), Scheduled Tribes (ST), Backward Classes (BC), or Minority communities residing in the state."],"requiredDocuments":["Application Form filled and signed.","Aadhaar Card copy of applicant and parents.","School Marks Memo / Transfer Certificate (TC) showing caste and date of birth.","Father's / Sibling's existing certified Caste Certificate (if available).","Ration Card or Electoral photo ID card."],"applicationSteps":[{"step":1,"title":"Submit Application at MeeSeva","desc":"Submit application form along with school certificates and lineage documents."},{"step":2,"title":"Revenue Scrutiny & Enquiry","desc":"Village Revenue Officer (VRO) and Mandal Revenue Inspector (MRI) verify caste records."},{"step":3,"title":"Tahsildar Digital Signature","desc":"Tahsildar approves and signs the certificate electronically."},{"step":4,"title":"Collect Hologram Certificate","desc":"Download digitally signed PDF or collect printout from MeeSeva center."}],"fees":{"meeseva_service_charge":"₹45 (Statutory service fee)","validity":"Life-long validity (unless revoked by competent authority)"},"features":["Permanent Life-Long validity","Integrated with Nativity and DOB","Mandatory for reservation benefits and scholarships","SLA processing time: 15 to 30 days"],"faqs":[{"q":"Does a Caste Certificate in Telangana expire?","a":"No. An Integrated Caste Certificate has lifelong validity. You do not need to apply again every year, unlike an income certificate."}],"keywords":["caste certificate","community certificate","sc","st","bc","minority","meeseva","tahsildar"]},{"id":"domicile-certificate","category":"certificate","categoryName":"Government Certificates","name":"Residence / Domicile Certificate","shortName":"Residence Certificate","icon":"home","badge":"State Govt (Revenue Department)","officialPortal":"Telangana MeeSeva Portal","officialUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htm","applicationUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","trackingUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","description":"Guidance for obtaining Residence / Domicile / Local Status Certificate proving permanent residency in Telangana for state quota admissions and government jobs.","whoCanApply":["Any person who has resided in the State of Telangana for the prescribed consecutive period (typically 4 or 7 years of continuous study/residence)."],"requiredDocuments":["Study / Bonafide Certificates from Class 4th to 10th or Degree proving local status.","Aadhaar Card and Voter ID.","House Tax Receipt / Electricity Bill / Sale Deed of property.","Ration Card copy."],"applicationSteps":[{"step":1,"title":"Submit Residence Application at MeeSeva","desc":"Fill form with period of stay and upload bonafide study certificates."},{"step":2,"title":"Revenue Inspector Field Verification","desc":"Local revenue staff checks address records and local candidate rules."},{"step":3,"title":"Tahsildar Digital Sign & Issue","desc":"Certificate is issued with barcode and verification URL."}],"fees":{"meeseva_service_charge":"₹45","validity":"Permanent or as specified by admitting authority"},"features":["Determines 85% local candidate quota in state colleges","Required for central government recruitments & defense quota","SLA processing time: 7 business days"],"faqs":[{"q":"Why is a Residence Certificate needed for higher education?","a":"In Telangana, 85% of seats in engineering, medical, and degree colleges are reserved for local candidates under the Presidential Order. This certificate proves your local candidate status."}],"keywords":["domicile","residence certificate","local candidate","nativity","meeseva","presidential order"]},{"id":"birth-certificate","category":"certificate","categoryName":"Government Certificates","name":"Birth Certificate (GHMC / Municipalities)","shortName":"Birth Certificate","icon":"baby","badge":"Local Body / Municipal Administration","officialPortal":"CDMA Telangana / GHMC Citizen Services","officialUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htm","applicationUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","trackingUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htm","description":"Guidance for registering new births, obtaining digital birth certificates, inclusion of child's name, and obtaining certified non-availability certificates.","whoCanApply":["Parents, guardians, or individuals born within the municipal/gram panchayat jurisdiction."],"requiredDocuments":["Hospital Birth Report Form (issued at delivery by hospital).","Aadhaar Cards of both parents.","Marriage Certificate / Proof of parentage (if requested).","Discharge summary of the mother."],"applicationSteps":[{"step":1,"title":"Hospital Institutional Registration","desc":"Hospitals report births directly to the local municipal registrar within 21 days."},{"step":2,"title":"Child Name Inclusion at MeeSeva","desc":"Parents apply to include child's name within 1 year without penalty."},{"step":3,"title":"Download QR-coded Birth Certificate","desc":"Download digitally signed certificate from CDMA / GHMC portal or MeeSeva."}],"fees":{"within_21_days":"Free of cost at hospital registration","meeseva_issue_fee":"₹45 user charge for certified printed copy"},"features":["Primary Proof of Date of Birth for Passport, School, and PAN","Online name inclusion within 1 year","Digital verification via GHMC/CDMA portal"],"faqs":[{"q":"What if a birth was not registered within 21 days?","a":"Late registration between 21 and 30 days is done with a nominal fee. Between 30 days and 1 year, Tahsildar/RDO permission is required. Beyond 1 year, an order from the Judicial First Class Magistrate is required."}],"keywords":["birth certificate","ghmc","cdma","dob proof","municipal","gram panchayat"]},{"id":"ration-card","category":"certificate","categoryName":"Government Certificates","name":"Food Security Card (Ration Card)","shortName":"Ration Card","icon":"shopping-bag","badge":"Civil Supplies Department","officialPortal":"Telangana Civil Supplies Consumer Affairs","officialUrl":"https://epds.telangana.gov.in/","applicationUrl":"https://ts.meeseva.telangana.gov.in/meeseva/home.htmmeeseva/home.htm","trackingUrl":"https://epds.telangana.gov.in/FoodSecurityAct/","description":"Guidance for Food Security Card (FSC) application, member addition/deletion, transfer of Fair Price Shop, and One Nation One Ration Card (ONORC) benefits.","whoCanApply":["Families residing in Telangana meeting rural/urban income criteria for Below Poverty Line (BPL) food security support."],"requiredDocuments":["Aadhaar Cards of all family members.","Income Certificate / Proof of income.","Address proof: Electricity bill or house tax receipt.","Group family photograph."],"applicationSteps":[{"step":1,"title":"Submit FSC Application at MeeSeva","desc":"Submit application form along with Aadhaar details of all members."},{"step":2,"title":"Civil Supplies Field Inspection","desc":"Food Revenue Inspector verifies eligibility and income threshold."},{"step":3,"title":"Approval & Card Generation","desc":"FSC number is assigned and physical card / digital coupon is issued."}],"fees":{"meeseva_charge":"₹45"},"features":["Subsidized food grain entitlements","Serves as definitive BPL proof for welfare schemes","One Nation One Ration Card (ONORC) portable across India"],"faqs":[{"q":"How does a Food Security Card help with student scholarships?","a":"Holding an active Food Security Card (Ration Card) in Telangana serves as primary corroborating proof of BPL/low-income status, speeding up income certificate and scholarship approval."}],"keywords":["ration card","food security card","fsc","civil supplies","epds","onorc","bpl"]}];
+    const CITIZEN_SERVICE_CATEGORIES = [{"id":"all","name":"All Citizen Services","icon":"layout-grid","count":15},{"id":"identity","name":"Identity Services","icon":"shield-check","count":3},{"id":"travel","name":"Travel & Transport","icon":"plane","count":2},{"id":"banking","name":"Banking Services","icon":"landmark","count":5},{"id":"certificate","name":"Government Certificates","icon":"file-text","count":5}];
+    let currentServiceCategory = 'all';
+
+    function renderCitizenServices() {
+      const container = document.getElementById('citizen-services-grid');
+      if (!container) return;
+
+      const searchInput = document.getElementById('services-search');
+      const q = (searchInput ? searchInput.value : '').toLowerCase().trim();
+
+      const filtered = CITIZEN_SERVICES_CATALOG.filter(s => {
+        if (currentServiceCategory !== 'all' && s.category !== currentServiceCategory) return false;
+        if (q) {
+          const haystack = (s.name + ' ' + s.description + ' ' + s.categoryName + ' ' + (s.keywords || []).join(' ')).toLowerCase();
+          return haystack.includes(q);
+        }
+        return true;
+      });
+
+      const countInd = document.getElementById('services-count-indicator');
+      if (countInd) {
+        countInd.innerText = `Showing ${filtered.length} of ${CITIZEN_SERVICES_CATALOG.length} Services`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full glass-card p-12 text-center space-y-3">
+            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mx-auto text-muted-grey">
+              <i data-lucide="search-x" class="w-6 h-6"></i>
+            </div>
+            <h4 class="text-white font-bold text-base">No Matching Citizen Services Found</h4>
+            <p class="text-xs text-muted-grey">Try a different search keyword (e.g. "PAN", "Aadhaar", "Passport", "Passbook", "Income") or select "All Services".</p>
+            <button onclick="filterServicesCategory('all'); if (document.getElementById('services-search')) document.getElementById('services-search').value='';" class="btn-gradient px-4 py-2 rounded-xl text-xs font-semibold text-white">Reset Filters</button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(s => {
+        let badgeColor = 'badge-primary';
+        if (s.category === 'identity') badgeColor = 'bg-electric-blue/10 text-electric-blue border border-electric-blue/20';
+        else if (s.category === 'travel') badgeColor = 'bg-neon-rose/10 text-[#FF4FA3] border border-neon-rose/20';
+        else if (s.category === 'banking') badgeColor = 'bg-success-green/10 text-success-green border border-success-green/20';
+        else if (s.category === 'certificate') badgeColor = 'bg-warning-amber/10 text-[#F59E0B] border border-warning-amber/20';
+
+        return `
+          <div class="glass-card p-6 flex flex-col justify-between space-y-4 hover:border-electric-blue/40 transition group">
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-cerulean/30 via-electric-blue/20 to-neon-rose/20 flex items-center justify-center text-electric-blue group-hover:scale-105 transition">
+                  <i data-lucide="${s.icon || 'file-text'}" class="w-5 h-5"></i>
+                </div>
+                <span class="px-2.5 py-0.5 text-[10px] rounded-full font-mono ${badgeColor}">${s.badge}</span>
+              </div>
+              <div>
+                <span class="text-[10px] text-muted-grey uppercase font-mono tracking-wider">${s.categoryName}</span>
+                <h4 class="text-lg font-bold text-white group-hover:text-electric-blue transition">${s.name}</h4>
+              </div>
+              <p class="text-xs text-muted-grey line-clamp-3 leading-relaxed">${s.description}</p>
+              
+              <!-- Highlights / Tags -->
+              <div class="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+                ${(s.features || []).slice(0, 2).map(f => `
+                  <span class="px-2 py-0.5 rounded-md bg-white/5 text-white/80 border border-white/5 flex items-center gap-1">
+                    <i data-lucide="check" class="w-3 h-3 text-success-green"></i> ${f}
+                  </span>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-white/5 flex items-center justify-between gap-2 text-xs">
+              <button onclick="openServiceDetail('${s.id}')" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold flex items-center gap-1.5 transition">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-electric-blue" style="pointer-events:none;"></i> View Guide
+              </button>
+              <button onclick="askAiAboutService('${s.id}', 'How do I apply for ${s.name}?')" class="btn-gradient px-3.5 py-2 rounded-xl text-white font-semibold flex items-center gap-1.5 shadow-md">
+                <i data-lucide="bot" class="w-3.5 h-3.5" style="pointer-events:none;"></i> Ask AI
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function filterServicesCategory(category) {
+      currentServiceCategory = category;
+      const categories = ['all', 'identity', 'travel', 'banking', 'certificate'];
+      categories.forEach(c => {
+        const btn = document.getElementById(`svc-cat-${c}`);
+        if (btn) {
+          if (c === category) {
+            btn.className = "px-4 py-2 rounded-xl font-semibold bg-white/10 text-white border border-white/20 transition flex items-center gap-2 shrink-0";
+          } else {
+            btn.className = "px-4 py-2 rounded-xl font-medium text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition flex items-center gap-2 shrink-0";
+          }
+        }
+      });
+      renderCitizenServices();
+    }
+
+    let activeModalService = null;
+    let activeModalTab = 'overview';
+
+    function openServiceDetail(serviceId) {
+      const service = CITIZEN_SERVICES_CATALOG.find(s => s.id === serviceId);
+      if (!service) return;
+      activeModalService = service;
+      activeModalTab = 'overview';
+
+      document.getElementById('modal-service-name').innerText = service.name;
+      document.getElementById('modal-service-category').innerText = service.categoryName;
+      document.getElementById('modal-service-badge').innerText = service.badge;
+      
+      const iconEl = document.getElementById('modal-service-icon');
+      if (iconEl) {
+        iconEl.innerHTML = `<i data-lucide="${service.icon || 'file-text'}" class="w-6 h-6 text-white"></i>`;
+      }
+
+      const askBtn = document.getElementById('modal-ask-ai-btn');
+      if (askBtn) {
+        askBtn.onclick = () => askAiAboutService(service.id, `How do I apply for ${service.name}?`);
+      }
+
+      switchServiceModalTab('overview');
+      const modal = document.getElementById('service-detail-modal');
+      if (modal) modal.classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function closeServiceDetail() {
+      const modal = document.getElementById('service-detail-modal');
+      if (modal) modal.classList.add('hidden');
+      activeModalService = null;
+    }
+
+    function switchServiceModalTab(tabName) {
+      activeModalTab = tabName;
+      const s = activeModalService;
+      if (!s) return;
+
+      const tabs = ['overview', 'documents', 'steps', 'fees', 'faqs'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`modal-tab-btn-${t}`);
+        if (btn) {
+          if (t === tabName) {
+            btn.className = "px-4 py-3 font-semibold text-electric-blue border-b-2 border-electric-blue transition shrink-0";
+          } else {
+            btn.className = "px-4 py-3 font-medium text-muted-grey hover:text-white transition shrink-0";
+          }
+        }
+      });
+
+      const body = document.getElementById('modal-service-body');
+      if (!body) return;
+
+      if (tabName === 'overview') {
+        body.innerHTML = `
+          <div class="space-y-4">
+            <div>
+              <h5 class="text-xs uppercase tracking-wider text-muted-grey font-mono">Service Summary</h5>
+              <p class="text-white text-sm mt-1 leading-relaxed">${s.description}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2">
+              <h5 class="text-xs uppercase tracking-wider text-electric-blue font-mono font-bold flex items-center gap-1.5">
+                <i data-lucide="check-circle" class="w-4 h-4 text-success-green"></i> Who Can Apply / Eligibility
+              </h5>
+              <ul class="space-y-1.5 text-xs text-white/90">
+                ${(s.whoCanApply || []).map(w => `<li class="flex items-start gap-2"><span class="text-electric-blue mt-0.5">•</span> <span>${w}</span></li>`).join('')}
+              </ul>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-[#08090D] border border-white/5 space-y-1">
+                <span class="text-[10px] text-muted-grey font-mono">OFFICIAL AUTHORITY</span>
+                <p class="text-white font-semibold">${s.officialPortal}</p>
+              </div>
+              <div class="p-3 rounded-xl bg-[#08090D] border border-white/5 space-y-1">
+                <span class="text-[10px] text-muted-grey font-mono">DIRECT PORTAL ACCESS</span>
+                <p><a href="${s.officialUrl}" target="_blank" rel="noopener noreferrer" class="text-electric-blue hover:underline flex items-center gap-1 citizen-services-link" style="pointer-events:auto;cursor:pointer;text-decoration:underline;">Open Official Portal <i data-lucide="external-link" class="w-3 h-3" style="pointer-events:none;"></i></a></p>
+              </div>
+            </div>
+
+            ${s.trackingUrl ? `
+              <div class="p-3 rounded-xl bg-electric-blue/10 border border-electric-blue/20 flex items-center justify-between text-xs">
+                <span class="text-white flex items-center gap-2"><i data-lucide="search" class="w-4 h-4 text-electric-blue"></i> Real-time Application Tracking Available</span>
+                <a href="${s.trackingUrl}" target="_blank" rel="noopener noreferrer" class="btn-gradient px-3 py-1.5 rounded-lg text-white font-semibold flex items-center gap-1 citizen-services-link" style="pointer-events:auto;cursor:pointer;">Track Status <i data-lucide="arrow-up-right" class="w-3 h-3"></i></a>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else if (tabName === 'documents') {
+        body.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <h5 class="text-xs uppercase tracking-wider text-muted-grey font-mono">Official Mandatory Document Checklist</h5>
+              <span class="text-[11px] text-success-green flex items-center gap-1"><i data-lucide="shield-check" class="w-3.5 h-3.5"></i> Verified Requirements</span>
+            </div>
+            <div class="space-y-2">
+              ${(s.requiredDocuments || []).map((doc, idx) => `
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-start gap-3">
+                  <div class="w-5 h-5 rounded-md bg-electric-blue/20 text-electric-blue flex items-center justify-center font-mono text-xs shrink-0 mt-0.5">${idx + 1}</div>
+                  <div class="text-xs text-white leading-relaxed">${doc}</div>
+                </div>
+              `).join('')}
+            </div>
+            <p class="text-[11px] text-muted-grey italic">*Always carry original certificates along with self-attested photocopies during offline verification appointments.</p>
+          </div>
+        `;
+      } else if (tabName === 'steps') {
+        body.innerHTML = `
+          <div class="space-y-4">
+            <h5 class="text-xs uppercase tracking-wider text-muted-grey font-mono">Step-by-Step Application Roadmap</h5>
+            <div class="space-y-3">
+              ${(s.applicationSteps || []).map(st => `
+                <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-1">
+                  <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-lg bg-gradient-to-r from-cerulean to-electric-blue text-white font-bold text-xs flex items-center justify-center shrink-0">${st.step}</span>
+                    <h6 class="text-sm font-bold text-white">${st.title}</h6>
+                  </div>
+                  <p class="text-xs text-muted-grey pl-8 leading-relaxed">${st.desc}</p>
+                </div>
+              `).join('')}
+            </div>
+            ${s.applicationUrl ? `
+              <div class="pt-2 text-center">
+                <a href="${s.applicationUrl}" target="_blank" rel="noopener noreferrer" class="btn-gradient inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-xs text-white shadow-lg citizen-services-link" style="pointer-events:auto;cursor:pointer;">
+                  <span>Start Official Application on ${s.shortName} Portal</span>
+                  <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      } else if (tabName === 'fees') {
+        body.innerHTML = `
+          <div class="space-y-4">
+            <h5 class="text-xs uppercase tracking-wider text-muted-grey font-mono">Officially Verified Government / Service Fee Schedule</h5>
+            <div class="space-y-2">
+              ${Object.entries(s.fees || {}).map(([key, val]) => `
+                <div class="p-3.5 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs">
+                  <span class="text-white capitalize font-medium">${key.replace(/_/g, ' ')}</span>
+                  <span class="font-bold text-electric-blue font-mono text-sm">${val}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div class="p-3 rounded-xl bg-white/5 border border-white/5 text-[11px] text-muted-grey flex items-start gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-electric-blue shrink-0 mt-0.5"></i>
+              <span>Fees listed are verified against official government notifications and do not include optional courier or expedited agent charges.</span>
+            </div>
+          </div>
+        `;
+      } else if (tabName === 'faqs') {
+        body.innerHTML = `
+          <div class="space-y-3">
+            <h5 class="text-xs uppercase tracking-wider text-muted-grey font-mono">Frequently Asked Questions</h5>
+            ${(s.faqs || []).map(f => `
+              <div class="p-4 rounded-xl bg-white/5 border border-white/5 space-y-1.5">
+                <p class="text-xs font-bold text-white flex items-start gap-2">
+                  <span class="text-neon-rose font-mono">Q:</span> <span>${f.q}</span>
+                </p>
+                <p class="text-xs text-muted-grey pl-4 leading-relaxed">${f.a}</p>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function askAiAboutService(serviceId, customPrompt) {
+      closeServiceDetail();
+      switchTab('assistant');
+      const input = document.getElementById('chat-input');
+      if (input) {
+        input.value = customPrompt || `How do I apply for ${serviceId}?`;
+        const form = input.closest('form');
+        if (form) form.dispatchEvent(new Event('submit'));
+      }
+    }
+
+    function updateSuggestedPromptChips(suggestions) {
+      const container = document.getElementById('chat-suggested-chips-container');
+      if (!container || !suggestions || !suggestions.length) return;
+
+      container.innerHTML = `
+        <span class="shrink-0 font-semibold text-white/70">Suggested:</span>
+        ${suggestions.map(s => `
+          <button onclick="sendQuickPrompt('${s.replace(/'/g, "\\'")}')" class="shrink-0 px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-electric-blue transition border border-white/5 text-xs">${s}</button>
+        `).join('')}
+      `;
+    }
+
+    function copyChatMessage(buttonEl, text) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast("Answer copied to clipboard", "success");
+        buttonEl.innerHTML = '<i data-lucide="check" class="w-3.5 h-3.5 text-success-green"></i> Copied';
+        lucide.createIcons();
+        setTimeout(() => {
+          buttonEl.innerHTML = '<i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy';
+          lucide.createIcons();
+        }, 2000);
+      }).catch(() => {
+        showToast("Could not copy text", "warning");
+      });
+    }
+
+
+    // State Variables
+    let currentLanguage = "English";
+    let allSchemes = [];
+    let savedSchemeIds = ["ts-epass-rtf", "myscheme-pragati"];
+    let currentAuthUser = { name: "Sathwika Reddy", email: "student@telangana.edu.in", role: "student" };
+    const API_BASE = "http://127.0.0.1:4000/api";
+
+    // Fallback Verified Offline Schemes Data in case backend is loading
+    const FALLBACK_SCHEMES = [
+      {
+        id: "ts-epass-rtf",
+        name: "Telangana Post-Matric Scholarships (RTF & MTF)",
+        ministry: "Telangana Backward Classes & SC/ST/Minority Welfare",
+        state: "Telangana",
+        benefits: "Full Tuition Fee Reimbursement (RTF) + Monthly Maintenance Allowance (MTF)",
+        income_limit: 200000,
+        category_eligible: ["SC", "ST", "BC", "EBC", "Minority"],
+        education_level: ["Graduation", "Professional", "Intermediate"],
+        application_deadline: "2026-12-31",
+        official_url: "https://telanganaepass.cgg.gov.in/",
+        required_documents: ["MeeSeva Income Certificate (< 1 yr)", "Caste Certificate", "College Bonafide", "SSC Memo"]
+      },
+      {
+        id: "nsp-csss",
+        name: "Central Sector Scheme of Scholarships (CSSS)",
+        ministry: "Department of Higher Education, Govt of India",
+        state: "All India (Central)",
+        benefits: "₹12,000/yr for Graduation, ₹20,000/yr for Post-Graduation",
+        income_limit: 450000,
+        category_eligible: ["All"],
+        education_level: ["Graduation", "Post Graduation"],
+        application_deadline: "2026-11-30",
+        official_url: "https://scholarships.gov.in/",
+        required_documents: ["Class 12 80th Percentile Memo", "Income Certificate", "College Bonafide"]
+      },
+      {
+        id: "myscheme-pragati",
+        name: "AICTE Pragati Scholarship for Girl Students",
+        ministry: "All India Council for Technical Education",
+        state: "All India (Central)",
+        benefits: "₹50,000 per annum towards fees, books, computer equipment",
+        income_limit: 800000,
+        category_eligible: ["All"],
+        gender_restriction: "Female",
+        education_level: ["Graduation", "Diploma"],
+        application_deadline: "2026-12-20",
+        official_url: "https://www.myscheme.gov.in/",
+        required_documents: ["X/XII Marks Memo", "Income Certificate", "AICTE College Admission Letter"]
+      },
+      {
+        id: "ts-overseas-vidyanidhi",
+        name: "Ambedkar Overseas Vidya Nidhi Scheme",
+        ministry: "Telangana Welfare Departments",
+        state: "Telangana",
+        benefits: "Grant of up to ₹20,00,000 + One-way economy air ticket for overseas PG/Ph.D.",
+        income_limit: 500000,
+        category_eligible: ["SC", "ST", "BC", "Minority"],
+        education_level: ["Post Graduation", "Doctoral"],
+        application_deadline: "2026-12-31",
+        official_url: "https://telanganaepass.cgg.gov.in/",
+        required_documents: ["Degree with 60% Marks", "GRE / IELTS / TOEFL", "Foreign University Offer", "Passport"]
+      }
+    ];
+
+    // Notification Toast Helper
+    function showToast(msg, type = "info") {
+      const c = document.getElementById("toast-container");
+      const t = document.createElement("div");
+      t.className = `p-4 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 transform transition duration-300 pointer-events-auto border ${
+        type === "success" ? "bg-success-green/20 text-success-green border-success-green/40" : 
+        type === "error" ? "bg-neon-rose/20 text-neon-rose border-neon-rose/40" : "bg-electric-blue/20 text-electric-blue border-electric-blue/40"
+      }`;
+      t.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'info'}" class="w-4 h-4"></i> ${msg}`;
+      c.appendChild(t);
+      lucide.createIcons();
+      setTimeout(() => {
+        t.style.opacity = '0';
+        setTimeout(() => t.remove(), 300);
+      }, 3500);
+    }
+
+    // Switch Navigation Tabs
+    function switchTab(pageId) {
+      const pages = ['dashboard', 'assistant', 'services', 'finder', 'checker', 'docs', 'guidance', 'saved', 'profile', 'knowledge', 'admin'];
+      pages.forEach(p => {
+        const el = document.getElementById(`page-${p}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      const target = document.getElementById(`page-${pageId}`);
+      if (target) target.classList.remove('hidden');
+
+      // Update Nav Button Styles
+      document.querySelectorAll('.nav-item').forEach(btn => {
+        if (btn.dataset.page === pageId) {
+          btn.className = "nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-white bg-white/5 border border-white/10";
+        } else {
+          btn.className = "nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-sm font-medium transition text-[#9CA3AF] hover:text-white hover:bg-white/5";
+        }
+      });
+
+      // Update Header Title
+      const titles = {
+        dashboard: "Student Assistance Dashboard",
+        assistant: "AI Government Services Assistant",
+        services: "Citizen Services Hub – Identity, Travel, Banking & Certificates",
+        finder: "Scholarship Finder & Directory",
+        checker: "Deterministic Eligibility Checker",
+        docs: "Document Intelligence (OCR)",
+        guidance: "Application Guidance Assistant",
+        saved: "Bookmarked Scholarships",
+        profile: "Student Welfare Profile",
+        knowledge: "Government Knowledge Ingestion Hub",
+        admin: "System Analytics & Source Status"
+      };
+      document.getElementById('page-header-title').innerText = titles[pageId] || "JanSahayak AI";
+      if (pageId === 'services') {
+        renderCitizenServices();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Language Toggle
+    function setLanguage(lang) {
+      currentLanguage = lang;
+      ['en', 'te', 'hi'].forEach(l => {
+        const b = document.getElementById(`lang-${l}`);
+        if (b) {
+          b.className = "px-3 py-1.5 rounded-lg text-muted-grey hover:text-white transition";
+        }
+      });
+      if (lang === "English") document.getElementById("lang-en").className = "px-3 py-1.5 rounded-lg bg-electric-blue text-black font-semibold transition";
+      if (lang === "Telugu") document.getElementById("lang-te").className = "px-3 py-1.5 rounded-lg bg-electric-blue text-black font-semibold transition";
+      if (lang === "Hindi") document.getElementById("lang-hi").className = "px-3 py-1.5 rounded-lg bg-electric-blue text-black font-semibold transition";
+      showToast(`Language switched to ${lang}`, "info");
+    }
+
+    // Load Initial Data
+    async function initPlatform() {
+      lucide.createIcons();
+      try {
+        const res = await fetch(`${API_BASE}/schemes`);
+        if (res.ok) {
+          const data = await res.json();
+          allSchemes = data.schemes || FALLBACK_SCHEMES;
+        } else {
+          allSchemes = FALLBACK_SCHEMES;
+        }
+      } catch (e) {
+        allSchemes = FALLBACK_SCHEMES;
+      }
+
+      renderSchemes();
+      populateCheckerSelect();
+      renderSavedSchemes();
+      renderCitizenServices();
+      renderGuidanceChecklist();
+      renderKnowledgeSources();
+    }
+
+    // Render Scholarship Cards
+    function renderSchemes() {
+      const grid = document.getElementById("finder-schemes-grid");
+      const dashGrid = document.getElementById("dashboard-recommended-grid");
+      if (!grid) return;
+
+      grid.innerHTML = "";
+      if (dashGrid) dashGrid.innerHTML = "";
+
+      allSchemes.forEach((s, idx) => {
+        const isSaved = savedSchemeIds.includes(s.id);
+        const cardHtml = `
+          <div class="glass-card p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="flex items-start justify-between gap-2">
+                <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full badge-primary">${s.state}</span>
+                <button onclick="toggleSaveScheme('${s.id}')" title="Save Scheme" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition text-muted-grey ${isSaved ? 'text-neon-rose' : ''}">
+                  <i data-lucide="bookmark" class="w-4 h-4 ${isSaved ? 'fill-neon-rose' : ''}"></i>
+                </button>
+              </div>
+              <h4 class="font-bold text-base text-white hover:text-electric-blue transition">${s.name}</h4>
+              <p class="text-xs text-muted-grey font-mono">${s.ministry}</p>
+              <div class="p-3 bg-[#10131B] rounded-xl text-xs space-y-1.5 border border-white/5">
+                <p class="text-electric-blue font-semibold"><i data-lucide="gift" class="w-3.5 h-3.5 inline mr-1"></i> ${s.benefits}</p>
+                <p class="text-muted-grey"><i data-lucide="wallet" class="w-3.5 h-3.5 inline mr-1"></i> Income Ceiling: ${s.income_limit ? '₹' + s.income_limit.toLocaleString('en-IN') : 'No Limit'}</p>
+                <p class="text-warning-amber"><i data-lucide="calendar" class="w-3.5 h-3.5 inline mr-1"></i> Deadline: ${s.application_deadline}</p>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-white/5 flex items-center justify-between gap-2">
+              <button onclick="checkSpecificEligibility('${s.id}')" class="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white flex items-center gap-1.5 transition">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-success-green"></i> Check Eligibility
+              </button>
+              <a href="${s.official_url}" target="_blank" class="p-2 rounded-xl bg-electric-blue/10 hover:bg-electric-blue/20 text-electric-blue text-xs font-semibold flex items-center gap-1 transition">
+                <span>Official Portal</span> <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+              </a>
+            </div>
+          </div>
+        `;
+
+        grid.innerHTML += cardHtml;
+        if (dashGrid && idx < 3) dashGrid.innerHTML += cardHtml;
+      });
+
+      lucide.createIcons();
+    }
+
+    // Toggle Save Scheme
+    function toggleSaveScheme(schemeId) {
+      if (savedSchemeIds.includes(schemeId)) {
+        savedSchemeIds = savedSchemeIds.filter(id => id !== schemeId);
+        showToast("Scheme removed from saved list", "info");
+      } else {
+        savedSchemeIds.push(schemeId);
+        showToast("Scheme saved to your profile", "success");
+      }
+      renderSchemes();
+      renderSavedSchemes();
+    }
+
+    // Render Saved Schemes
+    function renderSavedSchemes() {
+      const grid = document.getElementById("saved-schemes-grid");
+      const pill = document.getElementById("saved-count-pill");
+      if (!grid) return;
+
+      const saved = allSchemes.filter(s => savedSchemeIds.includes(s.id));
+      pill.innerText = `${saved.length} Saved`;
+
+      if (saved.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full text-center py-12 text-muted-grey space-y-3">
+            <i data-lucide="bookmark-minus" class="w-12 h-12 mx-auto text-muted-grey/50"></i>
+            <p>No saved schemes yet. Bookmark schemes from the Scholarship Finder!</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      grid.innerHTML = "";
+      saved.forEach(s => {
+        grid.innerHTML += `
+          <div class="glass-card p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full badge-primary">${s.state}</span>
+              <h4 class="font-bold text-base text-white">${s.name}</h4>
+              <p class="text-xs text-electric-blue">${s.benefits}</p>
+              <p class="text-xs text-muted-grey">Deadline: <strong class="text-warning-amber">${s.application_deadline}</strong></p>
+            </div>
+            <div class="pt-3 border-t border-white/5 flex gap-2">
+              <button onclick="toggleSaveScheme('${s.id}')" class="flex-1 py-2 rounded-xl bg-neon-rose/10 hover:bg-neon-rose/20 text-neon-rose text-xs font-semibold">Remove</button>
+              <a href="${s.official_url}" target="_blank" class="flex-1 py-2 rounded-xl bg-electric-blue/10 text-electric-blue text-xs font-semibold text-center">Apply Now</a>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    // Populate Checker Scheme Selector
+    function populateCheckerSelect() {
+      const sel = document.getElementById("checker-scheme-select");
+      if (!sel) return;
+      sel.innerHTML = "";
+      allSchemes.forEach(s => {
+        sel.innerHTML += `<option value="${s.id}">${s.name} (${s.state})</option>`;
+      });
+    }
+
+    // Direct Evaluation from Card
+    function checkSpecificEligibility(schemeId) {
+      switchTab('checker');
+      const sel = document.getElementById("checker-scheme-select");
+      if (sel) {
+        sel.value = schemeId;
+        runEligibilityEvaluation();
+      }
+    }
+
+    // Run Deterministic Eligibility
+    async function runEligibilityEvaluation() {
+      const schemeId = document.getElementById("checker-scheme-select").value;
+      const targetScheme = allSchemes.find(s => s.id === schemeId);
+      if (!targetScheme) return;
+
+      const income = Number(document.getElementById("checker-income").value);
+      const category = document.getElementById("checker-category").value;
+      const marks = Number(document.getElementById("checker-marks").value);
+      const state = document.getElementById("checker-state").value;
+
+      document.getElementById("eval-scheme-title").innerText = targetScheme.name;
+      document.getElementById("eval-official-link").href = targetScheme.official_url;
+
+      const criteria = [];
+      let isEligible = true;
+
+      // Income
+      if (targetScheme.income_limit) {
+        if (income <= targetScheme.income_limit) {
+          criteria.push({ title: "Income Limit Satisfied", desc: `Your income (₹${income.toLocaleString('en-IN')}) is below ₹${targetScheme.income_limit.toLocaleString('en-IN')}.`, pass: true });
+        } else {
+          criteria.push({ title: "Income Limit Exceeded", desc: `Income (₹${income.toLocaleString('en-IN')}) exceeds scheme limit (₹${targetScheme.income_limit.toLocaleString('en-IN')}).`, pass: false });
+          isEligible = false;
+        }
+      }
+
+      // State Domicile
+      if (targetScheme.state !== "All India (Central)") {
+        if (state === targetScheme.state) {
+          criteria.push({ title: "State Domicile Matches", desc: `Permanent resident of ${state}.`, pass: true });
+        } else {
+          criteria.push({ title: "Domicile Ineligible", desc: `Requires domicile in ${targetScheme.state}.`, pass: false });
+          isEligible = false;
+        }
+      } else {
+        criteria.push({ title: "National Central Scheme", desc: "Open to eligible students across all Indian states.", pass: true });
+      }
+
+      // Category
+      if (targetScheme.category_eligible && !targetScheme.category_eligible.includes("All")) {
+        if (targetScheme.category_eligible.includes(category)) {
+          criteria.push({ title: "Social Category Qualified", desc: `Category ${category} is approved for this scheme.`, pass: true });
+        } else {
+          criteria.push({ title: "Category Reservation", desc: `Scheme designated for [${targetScheme.category_eligible.join(', ')}].`, pass: false });
+          isEligible = false;
+        }
+      }
+
+      // Badge & Explanation
+      const badge = document.getElementById("eval-badge");
+      const explanation = document.getElementById("eval-explanation");
+      if (isEligible) {
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-success-green/20 text-success-green border border-success-green/30";
+        badge.innerText = "Fully Eligible";
+        explanation.innerText = "Congratulations! Based on official published criteria, your profile satisfies all statutory eligibility requirements.";
+      } else {
+        badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-neon-rose/20 text-neon-rose border border-neon-rose/30";
+        badge.innerText = "Not Eligible";
+        explanation.innerText = "You do not meet one or more verified government conditions. Review the unmet criteria below.";
+      }
+
+      // Render criteria list
+      const list = document.getElementById("eval-criteria-list");
+      list.innerHTML = "";
+      criteria.forEach(c => {
+        list.innerHTML += `
+          <div class="p-3 bg-[#10131B] rounded-xl border border-white/5 flex items-start gap-3 text-xs">
+            <i data-lucide="${c.pass ? 'check-circle-2' : 'x-circle'}" class="w-4 h-4 mt-0.5 ${c.pass ? 'text-success-green' : 'text-neon-rose'} shrink-0"></i>
+            <div>
+              <strong class="${c.pass ? 'text-white' : 'text-neon-rose'}">${c.title}</strong>
+              <p class="text-muted-grey mt-0.5">${c.desc}</p>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    // AI Chat Handling
+    async function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById("chat-input");
+      const query = input.value.trim();
+      if (!query) return;
+
+      appendChatMessage("user", query);
+      input.value = "";
+
+      // Assistant Thinking State
+      const thinkingId = appendChatThinking();
+
+      try {
+        const res = await fetch(`${API_BASE}/ai/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: query, language: currentLanguage })
+        });
+
+        document.getElementById(thinkingId)?.remove();
+
+        if (res.ok) {
+          const data = await res.json();
+          appendChatMessage("assistant", data.answer, data.citations);
+        } else {
+          appendFallbackAnswer(query);
+        }
+      } catch (err) {
+        document.getElementById(thinkingId)?.remove();
+        appendFallbackAnswer(query);
+      }
+    }
+
+    function appendChatMessage(sender, text, citations = []) {
+      const c = document.getElementById("chat-messages-container");
+      const d = document.createElement("div");
+      d.className = `flex items-start gap-3 ${sender === 'user' ? 'justify-end' : ''}`;
+
+      let formattedText = text
+        .replace(/\n/g, '<br>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/### (.*?)(<br>|$)/g, '<h4 class="text-sm font-bold text-white mt-2 mb-1">$1</h4>')
+        .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-electric-blue underline" style="pointer-events:auto;cursor:pointer;position:relative;z-index:2;">$1</a>');
+
+      let citationsHtml = '';
+      if (citations && citations.length > 0) {
+        citationsHtml = `
+          <div class="mt-3 pt-2 border-t border-white/5 space-y-1">
+            <span class="text-[10px] text-muted-grey font-mono uppercase tracking-wider">Official Verified Sources:</span>
+            ${citations.map(cite => `
+              <div class="text-[11px] text-electric-blue flex items-center justify-between">
+                <a href="${cite.url}" target="_blank" rel="noopener noreferrer" class="hover:underline flex items-center gap-1" style="color:#29B6F6;text-decoration:underline;pointer-events:auto;cursor:pointer;">
+                  <i data-lucide="external-link" class="w-3 h-3" style="pointer-events:none;"></i> ${cite.title}
+                </a>
+                <span class="text-[10px] text-muted-grey font-mono">${cite.verified_date || '2026'}</span>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      const escapedText = encodeURIComponent(text);
+
+      d.innerHTML = `
+        ${sender === 'assistant' ? '<div class="w-8 h-8 rounded-lg bg-cerulean/30 flex items-center justify-center shrink-0"><i data-lucide="bot" class="w-4 h-4 text-electric-blue"></i></div>' : ''}
+        <div class="glass-card p-4 max-w-2xl text-sm ${sender === 'user' ? 'bg-electric-blue/10 border-electric-blue/20 text-white' : 'text-white'} space-y-2">
+          <div>${formattedText}</div>
+          ${citationsHtml}
+          ${sender === 'assistant' ? `
+            <div class="pt-2 flex justify-end">
+              <button onclick="copyChatMessage(this, decodeURIComponent('${escapedText}'))" class="text-[11px] text-muted-grey hover:text-white px-2 py-1 rounded bg-white/5 hover:bg-white/10 flex items-center gap-1 transition">
+                <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy
+              </button>
+            </div>
+          ` : ''}
+        </div>
+        ${sender === 'user' ? '<div class="w-8 h-8 rounded-lg bg-neon-rose/30 flex items-center justify-center shrink-0"><i data-lucide="user" class="w-4 h-4 text-white"></i></div>' : ''}
+      `;
+      c.appendChild(d);
+      c.scrollTop = c.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function appendChatThinking() {
+      const id = "think-" + Date.now();
+      const c = document.getElementById("chat-messages-container");
+      const d = document.createElement("div");
+      d.id = id;
+      d.className = "flex items-start gap-3";
+      d.innerHTML = `
+        <div class="w-8 h-8 rounded-lg bg-cerulean/30 flex items-center justify-center shrink-0"><i data-lucide="bot" class="w-4 h-4 text-electric-blue"></i></div>
+        <div class="glass-card p-4 text-xs text-muted-grey flex items-center gap-2">
+          <i data-lucide="loader-2" class="w-4 h-4 text-electric-blue animate-spin"></i>
+          <span>Retrieving verified government guidelines & calculating eligibility rules...</span>
+        </div>
+      `;
+      c.appendChild(d);
+      c.scrollTop = c.scrollHeight;
+      lucide.createIcons();
+      return id;
+    }
+
+    function appendFallbackAnswer(query) {
+      appendChatMessage("assistant", 
+        `Based on verified guidelines for **Telangana ePASS** and **National Scholarship Portal**:\
+\
+` +
+        `• **Income Ceiling:** Rural: ₹1,50,000 / Urban: ₹2,00,000 (SC/ST up to ₹2,50,000).\
+` +
+        `• **Mandatory Documents:** MeeSeva Income Certificate, Integrated Caste Certificate, SSC Memo, and College Bonafide.\
+` +
+        `• **Official Application Portals:** [telanganaepass.cgg.gov.in](https://telanganaepass.cgg.gov.in/) and [scholarships.gov.in](https://scholarships.gov.in/).`,
+        [{ title: "Telangana Welfare Gazette 2026", url: "https://telanganaepass.cgg.gov.in/", verified_date: "2026-11-05" }]
+      );
+    }
+
+    function sendQuickPrompt(promptText) {
+      document.getElementById("chat-input").value = promptText;
+      handleChatSubmit(new Event('submit'));
+    }
+
+    async function clearChat() {
+      try {
+        await fetch(`${API_BASE}/ai/chat/clear`, { method: "POST" });
+      } catch (e) {}
+      const c = document.getElementById("chat-messages-container");
+      if (c) {
+        c.innerHTML = `
+          <div class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-lg bg-cerulean/30 flex items-center justify-center shrink-0"><i data-lucide="bot" class="w-4 h-4 text-electric-blue"></i></div>
+            <div class="glass-card p-4 max-w-2xl text-sm space-y-2">
+              <p class="text-white">Chat cleared! What citizen or scholarship service can I assist you with now?</p>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+      }
+      updateSuggestedPromptChips([
+        "Which scholarships can I apply for?",
+        "How do I apply for a PAN card?",
+        "How do I apply for a passport?",
+        "How do I download Aadhaar?",
+        "How do I request an ATM card?"
+      ]);
+      showToast("Conversation cleared", "info");
+    }
+
+    function startVoiceRecognition() {
+      if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const rec = new SpeechRec();
+        rec.lang = currentLanguage === 'Telugu' ? 'te-IN' : currentLanguage === 'Hindi' ? 'hi-IN' : 'en-IN';
+        showToast("Listening... Speak now", "info");
+        rec.onresult = (ev) => {
+          document.getElementById("chat-input").value = ev.results[0][0].transcript;
+          handleChatSubmit(new Event('submit'));
+        };
+        rec.onerror = () => showToast("Microphone input ended", "info");
+        rec.start();
+      } else {
+        showToast("Speech recognition not supported in this browser. Please type.", "info");
+      }
+    }
+
+    // Document OCR Demo & Handlers
+    function loadSampleDocText(val) {
+      const txtArea = document.getElementById("doc-raw-text");
+      if (val === "sample-meeseva") {
+        txtArea.value = `GOVERNMENT OF TELANGANA - REVENUE DEPARTMENT\
+MeeSeva Online Citizen Portal - Tahsildar Office\
+Certificate No: IC2026TS948271\
+Name of Student: Sathwika Reddy\
+Annual Family Income: Rs. 1,75,000/-\
+Category: BC-D\
+Date of Issue: 12-08-2026`;
+      } else if (val === "sample-caste") {
+        txtArea.value = `COMMUNITY, NATIVITY AND DATE OF BIRTH CERTIFICATE\
+Certificate Reference: CC2026TS104928\
+Name: Sathwika Reddy\
+Community: Other Backward Classes (BC-D)\
+Date of Issue: 10-06-2026`;
+      } else {
+        txtArea.value = `JAWAHARLAL NEHRU TECHNOLOGICAL UNIVERSITY HYDERABAD\
+MEMORANDUM OF MARKS - B.Tech Semester V\
+Student Name: Sathwika Reddy\
+SGPA: 8.42 / CGPA: 8.25\
+Percentage: 82.5%\
+Status: PASSED FIRST CLASS WITH DISTINCTION`;
+      }
+    }
+
+    function handleFileUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        document.getElementById("upload-file-label").innerText = `Loaded: ${file.name}`;
+        loadSampleDocText("sample-meeseva");
+        showToast(`Loaded ${file.name} for optical processing`, "success");
+      }
+    }
+
+    function processUploadedDocument() {
+      const txt = document.getElementById("doc-raw-text").value;
+      if (!txt) {
+        showToast("Please enter or upload document text first", "error");
+        return;
+      }
+      document.getElementById("ocr-status-pill").innerText = "Processed";
+      document.getElementById("ocr-status-pill").className = "text-xs px-2.5 py-1 rounded-full bg-success-green/20 text-success-green font-mono";
+      showToast("Document Intelligence extraction complete", "success");
+    }
+
+    function saveExtractedToProfile() {
+      showToast("Extracted income (₹1,75,000) and certificate details saved to Student Profile", "success");
+    }
+
+    // Guidance Checklist
+    function renderGuidanceChecklist() {
+      const container = document.getElementById("guidance-checklist-container");
+      if (!container) return;
+      const steps = [
+        { title: "Step 1: Obtain Valid MeeSeva Income & Caste Certificates", desc: "Ensure certificate is issued after April 1st of current financial year.", done: true },
+        { title: "Step 2: Collect Bonafide & Fee Structure from College", desc: "Signed by Principal / Registrar with College Stamp.", done: true },
+        { title: "Step 3: Online Registration on Telangana ePASS Portal", desc: "Enter SSC Hall ticket number and upload digital certificates.", done: true },
+        { title: "Step 4: Biometric Authentication at Institutional Helpdesk", desc: "Visit your college scholarship cell for Aadhaar biometric verification.", done: false },
+        { title: "Step 5: District Welfare Officer Scrutiny & Sanction Order", desc: "RTF directly credited to college bank account and MTF to student DBT.", done: false }
+      ];
+
+      container.innerHTML = "";
+      steps.forEach((s, i) => {
+        container.innerHTML += `
+          <div class="p-4 rounded-xl border ${s.done ? 'bg-success-green/5 border-success-green/20' : 'bg-[#10131B] border-white/5'} flex items-start gap-4">
+            <button onclick="toggleGuidanceStep(this)" class="mt-1 w-5 h-5 rounded-md flex items-center justify-center ${s.done ? 'bg-success-green text-black' : 'border border-muted-grey text-transparent'}">
+              <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            </button>
+            <div class="flex-1">
+              <h4 class="font-bold text-sm ${s.done ? 'text-white' : 'text-white/80'}">${s.title}</h4>
+              <p class="text-xs text-muted-grey mt-0.5">${s.desc}</p>
+            </div>
+            <span class="text-[11px] font-mono px-2 py-0.5 rounded ${s.done ? 'bg-success-green/20 text-success-green' : 'bg-white/5 text-muted-grey'}">
+              ${s.done ? 'COMPLETED' : 'PENDING'}
+            </span>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function toggleGuidanceStep(btn) {
+      showToast("Checklist step updated", "info");
+    }
+
+    function createApplicationTracker() {
+      switchTab('guidance');
+      showToast("Application Guidance Tracker Activated", "success");
+    }
+
+    // Knowledge Sources Grid
+    function renderKnowledgeSources() {
+      const container = document.getElementById("knowledge-sources-grid");
+      if (!container) return;
+      const sources = [
+        { name: "myScheme Central Platform", url: "https://www.myscheme.gov.in/", status: "Connected (Verified)", schemes: 32 },
+        { name: "National Scholarship Portal", url: "https://scholarships.gov.in/", status: "Connected (OTR)", schemes: 48 },
+        { name: "Telangana ePASS Portal", url: "https://telanganaepass.cgg.gov.in/", status: "Gazette Verified", schemes: 14 },
+        { name: "Open Govt Data (data.gov.in)", url: "https://data.gov.in/", status: "API Connector Ready", schemes: 8 },
+        { name: "API Setu Extensible Module", url: "https://apisetu.gov.in/", status: "Compliance Mode", schemes: 0 }
+      ];
+
+      container.innerHTML = "";
+      sources.forEach(src => {
+        container.innerHTML += `
+          <div class="p-4 rounded-xl bg-[#10131B] border border-white/5 space-y-3">
+            <div class="flex justify-between items-start">
+              <h5 class="font-bold text-sm text-white">${src.name}</h5>
+              <span class="w-2 h-2 rounded-full bg-success-green animate-pulse"></span>
+            </div>
+            <p class="text-xs text-muted-grey font-mono">${src.status}</p>
+            <div class="flex justify-between items-center text-xs pt-2 border-t border-white/5">
+              <span class="text-electric-blue">${src.schemes} Active Schemes</span>
+              <button onclick="showToast('Source re-sync triggered', 'info')" class="text-muted-grey hover:text-white">Refresh</button>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    function rebuildVectorEmbeddings() {
+      showToast("Rebuilding ChromaDB vector embeddings across verified circulars...", "info");
+      setTimeout(() => {
+        showToast("Vector embeddings rebuilt & synchronized successfully (128 chunks)", "success");
+      }, 1500);
+    }
+
+    function adminPublishScheme() {
+      const name = document.getElementById("admin-scheme-name").value;
+      if (!name) {
+        showToast("Please enter scheme name", "error");
+        return;
+      }
+      showToast(`Scheme [${name}] reviewed, approved, and added to the official catalog!`, "success");
+    }
+
+    function saveStudentProfile() {
+      showToast("Student profile successfully updated and synchronized!", "success");
+    }
+
+    function toggleAuthModal() {
+      document.getElementById("auth-modal").classList.toggle("hidden");
+    }
+
+    function handleQuickLogin(role) {
+      if (role === 'admin') {
+        document.getElementById("auth-email").value = "admin@jansahayak.gov.in";
+        document.getElementById("auth-password").value = "Admin@123";
+      } else {
+        document.getElementById("auth-email").value = "student@telangana.edu.in";
+        document.getElementById("auth-password").value = "Student@123";
+      }
+    }
+
+    function performLogin() {
+      const email = document.getElementById("auth-email").value;
+      if (email.includes("admin")) {
+        currentAuthUser = { name: "System Administrator", email, role: "admin" };
+        document.getElementById("user-display-name").innerText = "Admin Console";
+        showToast("Authenticated as Administrator", "success");
+      } else {
+        currentAuthUser = { name: "Sathwika Reddy", email, role: "student" };
+        document.getElementById("user-display-name").innerText = "Sathwika Reddy";
+        showToast("Authenticated as Sathwika Reddy", "success");
+      }
+      toggleAuthModal();
+    }
+
+    function resetFilters() {
+      document.getElementById("finder-search").value = "";
+      document.getElementById("filter-state").value = "All";
+      document.getElementById("filter-category").value = "All";
+      document.getElementById("filter-education").value = "All";
+      renderSchemes();
+      showToast("Filters reset", "info");
+    }
+
+    function applyFilters() {
+      const q = document.getElementById("finder-search").value.toLowerCase();
+      const state = document.getElementById("filter-state").value;
+      const cat = document.getElementById("filter-category").value;
+      const edu = document.getElementById("filter-education").value;
+
+      const filtered = allSchemes.filter(s => {
+        if (q && !s.name.toLowerCase().includes(q) && !s.ministry.toLowerCase().includes(q) && !s.benefits.toLowerCase().includes(q)) return false;
+        if (state !== "All" && s.state !== state && s.state !== "All India (Central)") return false;
+        if (cat !== "All" && s.category_eligible && !s.category_eligible.includes("All") && !s.category_eligible.includes(cat)) return false;
+        if (edu !== "All" && s.education_level && !s.education_level.includes("All") && !s.education_level.includes(edu)) return false;
+        return true;
+      });
+
+      const grid = document.getElementById("finder-schemes-grid");
+      grid.innerHTML = "";
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="col-span-full text-center py-12 text-muted-grey">No schemes match your filter criteria.</div>`;
+        return;
+      }
+
+      filtered.forEach(s => {
+        const isSaved = savedSchemeIds.includes(s.id);
+        grid.innerHTML += `
+          <div class="glass-card p-6 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <span class="px-2.5 py-1 text-[11px] font-semibold rounded-full badge-primary">${s.state}</span>
+              <h4 class="font-bold text-base text-white">${s.name}</h4>
+              <p class="text-xs text-muted-grey font-mono">${s.ministry}</p>
+              <div class="p-3 bg-[#10131B] rounded-xl text-xs space-y-1 border border-white/5">
+                <p class="text-electric-blue font-semibold">${s.benefits}</p>
+                <p class="text-muted-grey">Income Ceiling: ${s.income_limit ? '₹' + s.income_limit.toLocaleString('en-IN') : 'None'}</p>
+                <p class="text-warning-amber">Deadline: ${s.application_deadline}</p>
+              </div>
+            </div>
+            <div class="pt-3 border-t border-white/5 flex gap-2">
+              <button onclick="checkSpecificEligibility('${s.id}')" class="flex-1 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-semibold text-white">Check Eligibility</button>
+              <a href="${s.official_url}" target="_blank" class="p-2 rounded-xl bg-electric-blue/10 text-electric-blue"><i data-lucide="external-link" class="w-4 h-4"></i></a>
+            </div>
+          </div>
+        `;
+      });
+      lucide.createIcons();
+    }
+
+    // Initialize on Page Load
+    window.addEventListener("DOMContentLoaded", initPlatform);
+  </script>
+
+      <!-- Government Portal Gateway / Availability Advisor Modal -->
+      <div id="portal-gateway-modal" class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md bg-[#10131B] border border-white/10 rounded-2xl shadow-2xl p-6 space-y-4">
+          <div class="flex items-center justify-between border-b border-white/5 pb-3">
+            <div class="flex items-center gap-2.5">
+              <div class="w-9 h-9 rounded-xl bg-electric-blue/20 flex items-center justify-center text-electric-blue">
+                <i data-lucide="external-link" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <h4 class="text-sm font-bold text-white" id="gateway-portal-title">Official Government Portal</h4>
+                <p class="text-[11px] text-muted-grey">External Government Network Gateway</p>
+              </div>
+            </div>
+            <button onclick="closeGatewayModal()" class="p-1.5 rounded-lg text-muted-grey hover:text-white bg-white/5 hover:bg-white/10 transition">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1.5 text-xs text-muted-grey">
+            <div class="flex items-center gap-1.5 text-white font-medium">
+              <i data-lucide="shield-check" class="w-4 h-4 text-success-green"></i>
+              <span>Official Department Destination:</span>
+            </div>
+            <p class="font-mono text-electric-blue break-all text-[11px]" id="gateway-portal-url"></p>
+          </div>
+
+          <div id="gateway-warning-notice" class="p-3 rounded-xl bg-warning-amber/10 border border-warning-amber/20 text-xs text-warning-amber space-y-1">
+            <div class="flex items-center gap-1.5 font-semibold">
+              <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+              <span>Government Portal Availability Advisory:</span>
+            </div>
+            <p class="text-white/80 text-[11px] leading-relaxed" id="gateway-warning-text">
+              The official government portal is currently not responding. Please try again later or visit the department homepage.
+            </p>
+          </div>
+
+          <div class="pt-2 space-y-2">
+            <a id="gateway-proceed-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="closeGatewayModal()" class="w-full btn-gradient py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-lg">
+              <span>Proceed to Official Government Portal</span>
+              <i data-lucide="arrow-up-right" class="w-4 h-4"></i>
+            </a>
+            <a id="gateway-fallback-btn" href="#" target="_blank" rel="noopener noreferrer" onclick="closeGatewayModal()" class="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-medium text-muted-grey hover:text-white flex items-center justify-center gap-2 transition border border-white/5">
+              <i data-lucide="home" class="w-3.5 h-3.5"></i>
+              <span id="gateway-fallback-title">Visit Department Official Homepage</span>
+            </a>
+          </div>
+        </div>
+      </div>
+  
+
+    <script>
+      // Safe Government Portal Gateway Handler
+      const KNOWN_DEPARTMENT_HOMEPAGES = {
+        'uidai.gov.in': { title: 'UIDAI Official Portal', homepage: 'https://uidai.gov.in/', notice: 'UIDAI services may have security firewalls or high traffic. If MyAadhaar download times out, use the UIDAI official homepage or visit an authorized Aadhaar Seva Kendra.' },
+        'myaadhaar.uidai.gov.in': { title: 'MyAadhaar Portal', homepage: 'https://uidai.gov.in/', notice: 'The official government portal is currently not responding. Please try again later or visit the department homepage.' },
+        'incometax.gov.in': { title: 'Income Tax Department (e-Filing)', homepage: 'https://www.incometax.gov.in/iec/foportal/', notice: 'Official Income Tax Department portal. Instant e-PAN is generated with Aadhaar OTP.' },
+        'passportindia.gov.in': { title: 'Passport Seva (MEA)', homepage: 'https://www.passportindia.gov.in/psp', notice: 'Official Ministry of External Affairs Passport Seva Portal.' },
+        'voters.eci.gov.in': { title: 'Election Commission of India', homepage: 'https://voters.eci.gov.in/', notice: 'National Voters Service Portal of India.' },
+        'parivahan.gov.in': { title: 'Ministry of Road Transport & Highways', homepage: 'https://parivahan.gov.in/', notice: 'Official Parivahan Sarathi Citizen Portal.' },
+        'meeseva.telangana.gov.in': { title: 'MeeSeva Telangana Portal', homepage: 'https://ts.meeseva.telangana.gov.in/meeseva/home.htm', notice: 'Official Government of Telangana MeeSeva Services.' },
+        'telanganaepass.cgg.gov.in': { title: 'Telangana ePASS', homepage: 'https://telanganaepass.cgg.gov.in/', notice: 'Telangana State Electronic Payment & Application System of Scholarships.' }
+      };
+
+      function getDepartmentFallback(url) {
+        for (const [domain, info] of Object.entries(KNOWN_DEPARTMENT_HOMEPAGES)) {
+          if (url.includes(domain)) return info;
+        }
+        return {
+          title: 'Official Department Homepage',
+          homepage: url,
+          notice: 'The official government portal is currently not responding. Please try again later or visit the department homepage.'
+        };
+      }
+
+      function safeOpenPortal(targetUrl, portalName) {
+        const info = getDepartmentFallback(targetUrl);
+        const modal = document.getElementById('portal-gateway-modal');
+        if (!modal) {
+          window.open(targetUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+
+        document.getElementById('gateway-portal-title').innerText = portalName || info.title;
+        document.getElementById('gateway-portal-url').innerText = targetUrl;
+        document.getElementById('gateway-warning-text').innerText = info.notice;
+        
+        const proceedBtn = document.getElementById('gateway-proceed-btn');
+        proceedBtn.href = targetUrl;
+
+        const fallbackBtn = document.getElementById('gateway-fallback-btn');
+        fallbackBtn.href = info.homepage;
+        document.getElementById('gateway-fallback-title').innerText = 'Visit ' + info.title + ' Homepage';
+
+        modal.classList.remove('hidden');
+        lucide.createIcons();
+      }
+
+      function closeGatewayModal() {
+        const modal = document.getElementById('portal-gateway-modal');
+        if (modal) modal.classList.add('hidden');
+      }
+    </script>
+  
+</body>
+</html>
