@@ -20,3 +20,4 @@ Thumbs.db
 # User uploads / Temp storage
 uploads/*
 !uploads/.gitkeep
+
