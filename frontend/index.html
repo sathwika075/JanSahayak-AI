@@ -3282,8 +3282,12 @@
     const API_BASE = (function() {
       if (window.API_BASE_OVERRIDE) return window.API_BASE_OVERRIDE;
       const host = window.location.hostname || '127.0.0.1';
+      // When deployed on Vercel or any public domain (not localhost / local IP), point to Render backend
+      if (host !== 'localhost' && host !== '127.0.0.1' && !host.startsWith('192.168.') && !host.startsWith('10.') && !host.startsWith('172.')) {
+        return 'https://jansahayak-api-k71t.onrender.com/api';
+      }
       const proto = window.location.protocol || 'http:';
-      // When served on any host/IP, the backend runs on port 4000
+      // When served on local host/IP, the backend runs on port 4000
       return `${proto}//${host}:4000/api`;
     })();
     window.API_BASE = API_BASE.replace('/api', '');
